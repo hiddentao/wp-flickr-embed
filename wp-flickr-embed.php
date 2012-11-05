@@ -23,8 +23,8 @@ class WpFlickrEmbed {
     var $flickr_auth_url = 'http://flickr.com/services/auth/?';
     var $flickr_api_url = 'http://api.flickr.com/services/rest/?';
 
-    var $flickr_api_key = '448e0602a1f453c0e668e701f4bf8924';
-    var $flickr_api_secret = '2e5bb6215c1c3061';
+    var $flickr_api_key = '3f02754ebb3a1fb2d79f62200d3744e0';
+    var $flickr_api_secret = '4af3a6dcd49af4a7';
     var $flickr_api_frob = null;
 
     function WpFlickrEmbed() {
