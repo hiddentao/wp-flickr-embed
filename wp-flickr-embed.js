@@ -73,6 +73,8 @@ function WpFlickrEmbed() {
       value: size
     });
     newSizeRadio.attr('data-sizeCategory', sizeCategory);
+    newSizeRadio.attr('data-width', sizeObj.width || '');
+    newSizeRadio.attr('data-height', sizeObj.height || '');
 
     if (sizeObj.imgSrc && '' != sizeObj.imgSrc) {
       newSizeRadio.attr('rel', sizeObj.imgSrc);
@@ -111,6 +113,8 @@ function WpFlickrEmbed() {
         idPrefix: 'display',
         slug: this.slugifySizeLabel(list[i].label),
         imgSrc: list[i].source,
+        width: list[i].width,
+        height: list[i].height,
         label: list[i].label + ' (' + list[i].width + ' x ' + list[i].height + ')'
       }));
 
@@ -118,6 +122,8 @@ function WpFlickrEmbed() {
         idPrefix: 'lightbox',
         slug: this.slugifySizeLabel(list[i].label),
         imgSrc: list[i].source,
+        width: list[i].width,
+        height: list[i].height,
         label: list[i].label + ' (' + list[i].width + ' x ' + list[i].height + ')'
       }));
     }
@@ -352,9 +358,12 @@ function WpFlickrEmbed() {
       return;
     }
 
-    var img_url = null;
+    var img_url, img_width, img_height = null;
     if(0 < $('#select_size :radio:checked').size()) {
-      img_url = this.convertHTTPStoHTTP($('#select_size :radio:checked').attr('rel'));
+      var selectedSize = $('#select_size :radio:checked');
+      img_url = this.convertHTTPStoHTTP(selectedSize.attr('rel'));
+      img_width = selectedSize.attr('data-width');
+      img_height = selectedSize.attr('data-height');
     }
 
     if(0 < $('#select_lightbox_size :radio:checked').size()) {
@@ -363,7 +372,11 @@ function WpFlickrEmbed() {
     }
 
     var img = $('<img />');
-    img.attr('src', img_url).attr('alt', title_text).attr('title', title_text);
+    img.attr('src', img_url)
+        .attr('width', img_width)
+        .attr('height', img_height)
+        .attr('alt', title_text)
+        .attr('title', title_text);
 
     var a = $('<a />');
     a.attr('href', flickr_url).attr('title', title_text).attr('rel', setting_link_rel);
