@@ -1,14 +1,4 @@
 <?php
-/*
-Plugin Name: Wordpress Flickr Embed
-Plugin URI: http://factage.com/yu-ji/tag/wp-flickr-embed
-Description: Insert Flickr images into your post using an interactive popup, launched from the visual editor toolbar. Based on
-wordpress-media-flickr plugin by yu-ji.
-Author: Ramesh Nair
-Version: 1.0.0
-Author URI: http://hiddentao.com
-*/
-
 
 if (isset($_POST['action']) && $_POST['action'] == 'auth'){
     if(!empty($_POST['frob'])) {
