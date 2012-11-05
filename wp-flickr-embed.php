@@ -258,8 +258,7 @@ function media_upload_type_flickr() {
         opacity:0.75;
     }
     #alignment_preview,
-    #size_preview,
-    #lightbox_size_preview{
+    .size_preview {
         text-align: center;
     }
     #buttons {
@@ -350,9 +349,9 @@ function media_upload_type_flickr() {
 </form>
 <div id="put_background"></div>
 <form onsubmit="return false" id="put_dialog">
-    <div id="select_size">
+    <div id="select_size" class="selector">
         1. <?php _e('Select size of photo', 'wp-flickr-embed') ?>
-        <div id="size_preview"><img id="size_image" rel="none" src="<?php echo $wpFlickrEmbed->pluginURI ?>/images/size_t.png" alt=""/></div>
+        <div id="size_preview" class="size_preview"><img id="size_image" class="size_image" rel="none" src="<?php echo $wpFlickrEmbed->pluginURI ?>/images/size_t.png" alt=""/></div>
         <div class="sizes">
             <div class="div_size_sq"><input type="radio" class="size_sq" id="size_sq" name="size" value="size_sq" /> <label for="size_sq"><?php _e('Square', 'wp-flickr-embed') ?> (75 x 75)</label></div>
             <div class="div_size_t"><input type="radio" class="size_t" id="size_t" name="size" value="size_t" /> <label for="size_t"><?php _e('Thumbnail', 'wp-flickr-embed') ?> (100 x 75)</label></div>
@@ -363,7 +362,7 @@ function media_upload_type_flickr() {
             <div class="div_size_o_disabled"><input type="radio" class="size_o" name="size" value="size_o" disabled="disabled"/> <?php _e('Original', 'wp-flickr-embed') ?><?php _e('(not permitted)', 'wp-flickr-embed') ?></div>
         </div>
     </div>
-    <div id="select_alignment">
+    <div id="select_alignment" class="selector">
         2. <?php _e('Select alignment of photo', 'wp-flickr-embed') ?>
         <div id="alignment_preview"><img id="alignment_image" rel="none" src="<?php echo $wpFlickrEmbed->pluginURI ?>/images/alignment_none.png" alt=""/></div>
         <div id="alignments">
@@ -374,9 +373,9 @@ function media_upload_type_flickr() {
         </div>
     </div>
     <?php if (!empty($wpFlickrEmbed->settings['photo_link'])): ?>
-    <div id="select_lightbox_size">
+    <div id="select_lightbox_size" class="selector">
         3. <?php _e('Select size of lightbox photo', 'wp-flickr-embed') ?>
-        <div id="lightbox_size_preview"><img id="lightbox_size_image" rel="none" src="<?php echo $wpFlickrEmbed->pluginURI ?>/images/size_t.png" alt=""/></div>
+        <div id="lightbox_size_preview" class="size_preview"><img id="lightbox_size_image" class="size_image" rel="none" src="<?php echo $wpFlickrEmbed->pluginURI ?>/images/size_t.png" alt=""/></div>
         <div class="sizes">
             <div class="div_size_sq"><input type="radio" class="size_sq" id="lightbox_size_sq" name="lightbox_size" value="size_sq" /> <label for="lightbox_size_sq"><?php _e('Square', 'wp-flickr-embed') ?> (75 x 75)</label></div>
             <div class="div_size_t"><input type="radio" class="size_t" id="lightbox_size_t" name="lightbox_size" value="size_t" /> <label for="lightbox_size_t"><?php _e('Thumbnail', 'wp-flickr-embed') ?> (100 x 75)</label></div>
@@ -403,6 +402,7 @@ function media_upload_type_flickr() {
     var is_msie = /*@cc_on!@*/false;
 
     var plugin_uri = '<?php echo $wpFlickrEmbed->pluginURI ?>';
+    var plugin_img_uri = plugin_uri + '/images';
     var flickr_api_url = '<?php echo $wpFlickrEmbed->flickr_api_url ?>';
 
     var flickr_user_id = '<?php echo !empty($wpFlickrEmbed->settings['user_id']) ? $wpFlickrEmbed->settings['user_id'] : '' ?>';
