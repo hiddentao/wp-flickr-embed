@@ -17,7 +17,7 @@ This is a fork of the (http://wordpress.org/extend/plugins/wordpress-media-flick
 
 Features:
 * Search for an select any public photo or a private one from your photostream (requires Flickr authorization).
-* Insert a photo anywhere in your post, choosing the size you want and how it should be aligned to the text.
+* Insert a photo anywhere in your post, choosing its title, size and how it should be aligned to the text.
 * Link the photo back to its Flickr page or to a different-sized version of itself.
 * Supports Lightbox and Lightview popups.
 
