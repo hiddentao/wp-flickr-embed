@@ -387,9 +387,13 @@ function media_upload_type_flickr() {
         </div>
     </div>
     <?php endif; ?>
+    <div style="clear: both" />
     <div id="options">
+        <label for="photo_title"><?php _e('Photo title'); ?></label>
+        <input type="text" id="photo_title" name="photo_title" value="" /><br /><br />
+
         <input type="checkbox" id="continue_insert" name="continue_insert" value="1" />
-        <label for="continue_insert"><?php _e('Continue to insert other photo.', 'wp-flickr-embed') ?></label><br />
+        <label for="continue_insert"><?php _e('Continue to insert another photo after this.', 'wp-flickr-embed') ?></label><br />
     </div>
     <div id="buttons">
         <input type="button" value="<?php _e('Cancel', 'wp-flickr-embed') ?>" onclick="wpFlickrEmbed.cancelInsertImage()" class="button"/>

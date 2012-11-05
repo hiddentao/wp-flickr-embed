@@ -278,11 +278,17 @@ function WpFlickrEmbed() {
     if(!$('#select_lightbox_size :radio:checked').size()) {
       $('#lightbox_size_t').attr('checked', 'checked');
     }
+
+    $('#photo_title').val(this.title_text);
   }
 
   this.insertImage = function() {
     var flickr_url = this.flickr_url;
-    var title_text = this.title_text;
+    var title_text = $.trim($('#photo_title').val());
+    if ('' == title_text) {
+      alert('Please enter a title for the photo');
+      return;
+    }
 
     var img_url = null;
     if(0 < $('#select_size :radio:checked').size()) {
