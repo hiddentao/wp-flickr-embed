@@ -258,11 +258,8 @@ function WpFlickrEmbed() {
       var photo = list[i];
 
       photo.short_title = photo.title.replace(/^(.{17}).*$/, '$1...');
-      photo.title = photo.title;
 
-      var image_s_url = photo.url_sq;
-
-      var image_m_url = photo.url_m;
+      var image_s_url = this.convertHTTPStoHTTP(photo.url_sq);
 
       var owner = photo.owner;
       if(!owner) {
@@ -336,6 +333,17 @@ function WpFlickrEmbed() {
     $('#photo_title').val(this.title_text);
   }
 
+
+  /**
+   * Convert HTTPS URL into HTTP.
+   * @param url a URL string
+   * @return String
+   */
+  this.convertHTTPStoHTTP = function(url) {
+    return url.replace('https:', 'http');
+  }
+
+
   this.insertImage = function() {
     var flickr_url = this.flickr_url;
     var title_text = $.trim($('#photo_title').val());
@@ -346,11 +354,12 @@ function WpFlickrEmbed() {
 
     var img_url = null;
     if(0 < $('#select_size :radio:checked').size()) {
-      img_url = $('#select_size :radio:checked').attr('rel');
+      img_url = this.convertHTTPStoHTTP($('#select_size :radio:checked').attr('rel'));
     }
 
     if(0 < $('#select_lightbox_size :radio:checked').size()) {
-      flickr_url = $('#select_lightbox_size :radio:checked').attr('rel');
+      flickr_url = this.convertHTTPStoHTTP($('#select_lightbox_size :radio:checked').attr('rel'));
+
     }
 
     var img = $('<img />');
