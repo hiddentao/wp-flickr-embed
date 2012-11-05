@@ -340,7 +340,7 @@ function WpFlickrEmbed() {
    * @return String
    */
   this.convertHTTPStoHTTP = function(url) {
-    return url.replace('https:', 'http');
+    return url.replace('https:', 'http:');
   }
 
 
