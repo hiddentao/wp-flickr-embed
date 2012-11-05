@@ -27,17 +27,15 @@ function WpFlickrEmbed() {
   this.photoset_id = null;
 
   this.alignments = ['alignment_none', 'alignment_left', 'alignment_center', 'alignment_right'];
-  this.sizes = new Object();
-  this.sizes.Square = 'size_sq';
-  this.sizes.Thumbnail = 'size_t';
-  this.sizes.Small = 'size_s';
-  this.sizes.Medium = 'size_m';
-  this.sizes.Large = 'size_l';
-  this.sizes.Original = 'size_o';
-
   this.photos = {};
   this.flickr_url = '';
   this.title_text = '';
+
+
+  this.slugifySizeLabel = function(sizeLabel) {
+    return sizeLabel.toLowerCase().replace(' ', '_');
+  };
+
 
   this.flickrGetPhotoSizes = function(photo_id) {
     var params = {};
@@ -51,7 +49,48 @@ function WpFlickrEmbed() {
         this.obj2query(params) + '&time='+(new Date()).getTime();
 
     $.getScript(url);
+    $('#loader').show();
   }
+
+
+  /**
+   * Build DIV containing Radio button for selecting a size.
+   * @return {*}
+   */
+  this.buildSizeSelectorRadioButtonDiv = function(sizeObj) {
+    var size = sizeObj.slug;
+
+    // e.g. 'medium_600' -> 'medium'
+    var sizeCategory = (size.split('_') || [size])[0];
+    if ('large_square' == sizeObj.slug) sizeCategory = 'square';
+
+    var newSizeRadioInputId = sizeObj.idPrefix + '_' + size;
+
+    var newSizeRadio = $('<input type="radio" />');
+    newSizeRadio.attr({
+      id: newSizeRadioInputId,
+      name: sizeObj.idPrefix + '_size',
+      value: size
+    });
+    newSizeRadio.attr('data-sizeCategory', sizeCategory);
+
+    if (sizeObj.imgSrc && '' != sizeObj.imgSrc) {
+      newSizeRadio.attr('rel', sizeObj.imgSrc);
+    } else {
+      newSizeRadio.attr('disabled', 'disabled');
+    }
+
+    var newSizeLabel = $('<label />');
+    newSizeLabel.attr('for', newSizeRadioInputId);
+    newSizeLabel.text(sizeObj.label);
+
+    var newSizeDiv = $('<div />');
+    newSizeDiv.addClass(size);
+    newSizeDiv.append(newSizeRadio).append('<span>&nbsp;</span>').append(newSizeLabel);
+
+    return newSizeDiv;
+  };
+
 
   this.callbackPhotoSizes = function(data) {
     if (! data) return this.error(data);
@@ -60,27 +99,48 @@ function WpFlickrEmbed() {
     if (! list) return this.error(data);
     if (! list.length) return this.error(data);
 
-    for(label in this.sizes) {
-      var size = this.sizes[label];
-      var i = 0;
-      for(i=0;i<list.length;i++) {
-        if(list[i].label == label && list[i].source != '') {
-          $('.div_'+size).show();
-          $('.'+size).attr('rel', list[i].source);
-          if($('.div_'+size+'_disabled').size()) {
-            $('.div_'+size+'_disabled').hide();
-          }
-          break;
-        }
-      }
-      if(i >= list.length) {
-        $('.div_'+size).hide();
-        $('.'+size).removeAttr('rel');
-        if($('.div_'+size+'_disabled').size()) {
-          $('.div_'+size+'_disabled').show();
-        }
-      }
+    var jqDisplaySizeDiv = $('#select_size div.sizes').empty();
+    var jqLightboxSizeDiv = $('#select_lightbox_size div.sizes').empty();
+
+    var originalSizeIncluded = false;
+
+    for (i=0; i<list.length; ++i) {
+      originalSizeIncluded = ('Original' == list[i].label);
+
+      jqDisplaySizeDiv.append(this.buildSizeSelectorRadioButtonDiv({
+        idPrefix: 'display',
+        slug: this.slugifySizeLabel(list[i].label),
+        imgSrc: list[i].source,
+        label: list[i].label + ' (' + list[i].width + ' x ' + list[i].height + ')'
+      }));
+
+      jqLightboxSizeDiv.append(this.buildSizeSelectorRadioButtonDiv({
+        idPrefix: 'lightbox',
+        slug: this.slugifySizeLabel(list[i].label),
+        imgSrc: list[i].source,
+        label: list[i].label + ' (' + list[i].width + ' x ' + list[i].height + ')'
+      }));
     }
+
+    // original size disabled?
+    if (!originalSizeIncluded) {
+      jqDisplaySizeDiv.append(this.buildSizeSelectorRadioButtonDiv({
+        idPrefix: 'display',
+        slug: 'original',
+        label: 'Original (not permitted)'
+      }));
+
+      jqLightboxSizeDiv.append(this.buildSizeSelectorRadioButtonDiv({
+        idPrefix: 'lightbox',
+        slug: 'original',
+        label: 'Original (not permitted)'
+      }));
+    }
+
+    jqDisplaySizeDiv.find(':radio').first().click();
+    jqLightboxSizeDiv.find(':radio').first().click();
+
+    $('#loader').hide();
     $('#put_dialog').show();
     $('#put_background').show();
   }
@@ -162,12 +222,13 @@ function WpFlickrEmbed() {
     }
 
     this.clearItems();
-    $('#items').html('<img src="'+plugin_img_uri+'/loading.gif" />');
+    $('#items').html();
+    $('#loader').show();
 
     var url = '//www.flickr.com/services/rest/?'+
         this.obj2query(params) + '&time='+(new Date()).getTime();
-
-    console.log(url);
+//
+//    console.log(url);
 
     $.getScript(url);
   }
@@ -258,6 +319,7 @@ function WpFlickrEmbed() {
       div.appendChild(title);
 
       $('#items').append(div);
+      $('#loader').hide();
     }
   }
 
@@ -269,14 +331,6 @@ function WpFlickrEmbed() {
 
     if(!$('#select_alignment :radio:checked').size()) {
       $('#alignment_none').attr('checked', 'checked');
-    }
-
-    if(!$('#select_size :radio:checked').size()) {
-      $('#size_t').attr('checked', 'checked');
-    }
-
-    if(!$('#select_lightbox_size :radio:checked').size()) {
-      $('#lightbox_size_t').attr('checked', 'checked');
     }
 
     $('#photo_title').val(this.title_text);
@@ -339,15 +393,15 @@ function WpFlickrEmbed() {
   this.changeSize = function(e) {
     var elem = $(e.target);
 
-    var size = elem.val();
-    if (!size) return;
+    var sizeCategory = elem.attr('data-sizeCategory');
+    if (!sizeCategory) return;
 
     var preview_img = elem.closest('.selector').find('.size_preview img');
     if (0 >= preview_img.size()) return;
 
-    if(preview_img.attr('rel') != size) {
-      preview_img.attr('rel', size);
-      preview_img.attr('src', plugin_img_uri+'/'+size+'.png');
+    if(preview_img.attr('rel') != sizeCategory) {
+      preview_img.attr('rel', sizeCategory);
+      preview_img.attr('src', plugin_img_uri+'/size_'+sizeCategory+'.png');
     }
   };
 
@@ -432,21 +486,21 @@ var wpFlickrEmbed = new WpFlickrEmbed();
 
 $(document).ready(function() {
 
-  $('div#alignments :radio').change(wpFlickrEmbed.changeAlignment);
-  $('div.sizes :radio').change(wpFlickrEmbed.changeSize);
-  $('input.searchTypes').change(wpFlickrEmbed.changeSearchType);
+  $('div#alignments').on('change', ':radio', wpFlickrEmbed.changeAlignment);
+  $('.sizes').on('change', ':radio', wpFlickrEmbed.changeSize);
+  $('input.searchTypes').on('change', wpFlickrEmbed.changeSearchType);
 
   new Image().src = plugin_img_uri+'/alignment_none.png';
   new Image().src = plugin_img_uri+'/alignment_left.png';
   new Image().src = plugin_img_uri+'/alignment_center.png';
   new Image().src = plugin_img_uri+'/alignment_right.png';
 
-  new Image().src = plugin_img_uri+'/size_sq.png';
-  new Image().src = plugin_img_uri+'/size_t.png';
-  new Image().src = plugin_img_uri+'/size_s.png';
-  new Image().src = plugin_img_uri+'/size_m.png';
-  new Image().src = plugin_img_uri+'/size_l.png';
-  new Image().src = plugin_img_uri+'/size_o.png';
+  new Image().src = plugin_img_uri+'/size_square.png';
+  new Image().src = plugin_img_uri+'/size_thumbnail.png';
+  new Image().src = plugin_img_uri+'/size_small.png';
+  new Image().src = plugin_img_uri+'/size_medium.png';
+  new Image().src = plugin_img_uri+'/size_large.png';
+  new Image().src = plugin_img_uri+'/size_original.png';
 
   wpFlickrEmbed.searchPhoto(0);
 
