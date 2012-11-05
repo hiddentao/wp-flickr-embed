@@ -66,7 +66,7 @@ class WpFlickrEmbed {
         $wp_flickr_embed_iframe_src = apply_filters('wp_flickr_embed_iframe_src', "$media_upload_iframe_src&amp;type=flickr&amp;tab=flickr");
         $wp_flickr_embed_title = __('Add Flickr photo', 'wp-flickr-embed');
 
-        echo "<a href=\"{$wp_flickr_embed_iframe_src}&amp;TB_iframe=true&amp;height=500&amp;width=640\" class=\"thickbox\" title=\"$wp_flickr_embed_title\"><img src=\"{$this->pluginURI}/images/media-flickr.gif\" alt=\"$wp_flickr_embed_title\" /></a>";
+        echo "<a href=\"{$wp_flickr_embed_iframe_src}&amp;TB_iframe=true&amp;height=500&amp;width=640\" class=\"thickbox\" title=\"$wp_flickr_embed_title\"><img src=\"{$this->pluginURI}/images/media-flickr.png\" alt=\"$wp_flickr_embed_title\" /></a>";
     }
 
     function modifyMediaTab($tabs) {
