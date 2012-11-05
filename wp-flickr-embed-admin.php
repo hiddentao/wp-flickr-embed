@@ -93,7 +93,7 @@ $settings = $wpFlickrEmbed->settings;
 <input type="hidden" name="action" value="update" />
 <table width="100%" cellspacing="2" cellpadding="5" class="form-table">
     <tr>
-        <th width="33%" valign="top" scope="row"><?php _e('Link of photo', 'wp-flickr-embed') ?>: </th>
+        <th width="33%" valign="top" scope="row"><?php _e('Link the photo to', 'wp-flickr-embed') ?>: </th>
         <td>
             <input type="radio" id="link_flickr" name="photo_link" value="0" <?php if(empty($settings['photo_link'])){ ?>checked="checked" <?php } ?>/> <label for="link_flickr"><?php _e('The photo page of Flickr', 'wp-flickr-embed'); ?></label><br />
             <input type="radio" id="link_photo" name="photo_link" value="1" <?php if(!empty($settings['photo_link'])){ ?>checked="checked" <?php } ?>/> <label for="link_photo"><?php _e('The photo directly', 'wp-flickr-embed'); ?></label><br />

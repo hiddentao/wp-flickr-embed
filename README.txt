@@ -15,6 +15,12 @@ Wordpress Flickr Embed is a Wordpress plugin that provides an interactive interf
 
 This is a fork of the (http://wordpress.org/extend/plugins/wordpress-media-flickr/) plugin for Wordpress and provides numerous bug fixes and enhancements over the original.
 
+Features:
+* Search for an select any public photo or a private one from your photostream (requires Flickr authorization).
+* Insert a photo anywhere in your post, choosing the size you want and how it should be aligned to the text.
+* Link the photo back to its Flickr page or to a different-sized version of itself.
+* Supports Lightbox and Lightview popups.
+
 == Installation ==
 
 1. Download and unzip the zip file into your Wordpress `plugins` folder such that the plugin files are at: `wp-content/plugins/wp-flickr-embed/...`
@@ -31,11 +37,20 @@ This is a fork of the (http://wordpress.org/extend/plugins/wordpress-media-flick
 
 = How do I authenticate the plugin with my Flickr account? =
 
-Goto `Settings > Flickr Embed` and click 'Flickr Authenticate'. This will take you to Flickr where upon you should login and follow the instructions. Once you've authorized it in Flickr come back and click 'Finish authenticate'.
+1. Goto `Settings > Flickr Embed` and click `Flickr Authenticate`.
+2. This will take you to Flickr where upon you should login and follow the instructions.
+3. Once you've authorized it in Flickr go back to `Settings > Flickr Embed` and click `Finish authenticate`.
 
 = I don't have a Flickr account. Can I still use the plugin? =
 
 Yes you can. You will still be able to insert any public photo available on Flickr. Authentication is only needed if you wish to access your own private photos on Flickr.
+
+= How do I get it working with Lightbox? =
+
+1. Goto `Settings > Flickr Embed`
+2. Set `Link the photo to` to `the photo itself`.
+3. Set `The "rel" attribute of link tag` option to `lightbox`.
+4. Click `Update options`.
 
 == Changelog ==
 
