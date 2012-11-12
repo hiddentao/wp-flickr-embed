@@ -21,6 +21,9 @@ Features:
 * Link the photo back to its Flickr page or to a different-sized version of itself.
 * Supports Lightbox and Lightview popups.
 
+Source on Github: https://github.com/hiddentao/wp-flickr-embed
+
+
 == Installation ==
 
 1. Download and unzip the zip file into your Wordpress `plugins` folder such that the plugin files are at: `wp-content/plugins/wp-flickr-embed/...`
@@ -52,7 +55,8 @@ Yes you can. You will still be able to insert any public photo available on Flic
 3. Set `The "rel" attribute of link tag` option to `lightbox`.
 4. Click `Update options`.
 
+
 == Changelog ==
 
 = 1.0.0 (Nov 5, 2012) =
-* First version, source available on github: https://github.com/hiddentao/wp-flickr-embed
+* First version
