@@ -15,7 +15,7 @@ Wordpress Flickr Embed is a Wordpress plugin that provides an interactive interf
 
 This is a fork of the (http://wordpress.org/extend/plugins/wordpress-media-flickr/) plugin for Wordpress and provides numerous bug fixes and enhancements over the original.
 
-Features:
+= Features =
 * Search for an select any public photo or a private one from your photostream (requires Flickr authorization).
 * Insert a photo anywhere in your post, choosing its title, size and how it should be aligned to the text.
 * Link the photo back to its Flickr page or to a different-sized version of itself.
