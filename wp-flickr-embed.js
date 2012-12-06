@@ -24,6 +24,7 @@ function WpFlickrEmbed() {
   this.page = 1;
   this.user_id = null;
   this.query = null;
+  this.sort_by = null;
   this.photoset_id = null;
 
   this.alignments = ['alignment_none', 'alignment_left', 'alignment_center', 'alignment_right'];
@@ -202,6 +203,7 @@ function WpFlickrEmbed() {
         this.photoset_id = null;
       }
       this.query = $('#flickr_search_query').val();
+      this.sort_by = $('#sort_by').val();
     }else{
       this.page += paging;
     }
@@ -214,7 +216,7 @@ function WpFlickrEmbed() {
   }
   this.flickrPhotoSearch = function(params) {
     params.per_page = 18;
-    params.sort     = 'date-posted-desc';
+    params.sort     = this.sort_by;
     params.format   = 'json';
     params.jsoncallback = 'wpFlickrEmbed.callbackSearchPhotos';
     params.extras = 'url_sq,url_m';

@@ -321,6 +321,12 @@ function media_upload_type_flickr() {
         display: none;
         color: #888;
     }
+    #search-filter  {
+        text-align: left;
+    }
+    #search-filter .extra_filters {
+        margin: 5px 0;
+    }
     h3 {
         padding-top: 10px;
     }
@@ -342,17 +348,25 @@ function media_upload_type_flickr() {
 <form method="get" class="media-upload-form type-form" onsubmit="return false">
     <input type="hidden" name="type" value="<?php echo $type ?>" />
     <input type="hidden" name="tab" value="<?php echo $tab ?>" />
-    <div id="search-filter">
+    <div id="search-filter" style="text-align: left">
         <?php _e('Search:', 'wp-flickr-embed') ?>
         <input type="text" id="flickr_search_query" />
-        <?php if(!empty($wpFlickrEmbed->settings['username'])) { ?>
-        <select id="photoset" name="photoset">
-        </select>
+        <?php if(!empty($wpFlickrEmbed->settings['username'])): ?>
+        <select id="photoset" name="photoset"></select>
         <input type="radio" id="flickr_search_0" name="flickr_search" class="searchTypes" value="own" checked="checked"/><label for="flickr_search_0"><?php _e('Your Photos', 'wp-flickr-embed') ?></label>
         <input type="radio" id="flickr_search_1" name="flickr_search" class="searchTypes" value="sets"/><label for="flickr_search_1"><?php _e('Your Sets', 'wp-flickr-embed') ?></label>
         <input type="radio" id="flickr_search_2" name="flickr_search" class="searchTypes" value="everyone"/><label for="flickr_search_2"><?php _e('Everyone\'s Photos', 'wp-flickr-embed') ?></label>
-        <?php } ?>
+        <?php endif; ?>
         <input type="submit" onclick="wpFlickrEmbed.searchPhoto(0)" value="<?php _e('Search photo', 'wp-flickr-embed'); ?>" class="button" />
+        <div class="extra_filters">
+            <label for="sort_by">Sort by:</label>
+            <select id="sort_by">
+                <option value="date-posted-desc">Date posted (desc)</option>
+                <option value="date-posted-asc">Date posted (asc)</option>
+                <option value="date-taken-desc">Date taken (desc)</option>
+                <option value="date-taken-asc">Date taken (asc)</option>
+            </select>
+        </div>
     </div>
     <h3><?php _e('Flickr photos', 'wp-flickr-embed') ?><span id="pages"></span></h3>
     <div id="pager">
