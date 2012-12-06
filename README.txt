@@ -7,7 +7,7 @@ Plugin URI: https://github.com/hiddentao/wp-flickr-embed
 Tags: admin, images, posts, flickr, embed
 Requires at least: 3.4.1
 Tested up to: 3.4.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 
 == Description ==
 
