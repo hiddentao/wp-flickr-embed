@@ -1,0 +1,149 @@
+<?php
+
+
+/**
+ * Companion class to admin page.
+ */
+class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
+    private $_errors = array();
+    private $_messages  = array();
+    private $_slug = 'wp-flickr-embed';
+
+
+    public function __construct() {
+        global $wpFlickrEmbed;
+
+        if ($wpFlickrEmbed->disabled) {
+            $this->_messages[] = __('Your version of PHP does not support curl, and allow_url_fopen is disabled.<br />Thus is preventing Flickr authentication.', 'wp-flickr-embed');
+        }
+    }
+
+
+    /**
+     * Handle form submissions.
+     */
+    public function handleFormSubmissions() {
+        global $wpFlickrEmbed;
+
+        // did we just try and authenticate with Flickr? (see includes/flickrAuthenticator.php)
+        if (!empty($_SESSION['wp-flickr-embed']) && !empty($_SESSION['wp-flickr-embed']['auth'])) {
+            $result = $_SESSION['wp-flickr-embed']['auth'];
+            unset($_SESSION['wp-flickr-embed']['auth']);
+
+            if ('success' === $result) {
+                $wpFlickrEmbed->saveFlickrAuthentication();
+                $this->_messages[] = __('Flickr authorization successful', $this->_slug);
+            } else {
+                $this->_errors[] = __('Oops, something went wrong whilst trying to authenticate with Flickr', $this->_slug);
+            }
+        }
+        else if ('clear_flickr' === $_POST['action']){
+            $wpFlickrEmbed->clearFlickrAuthentication();
+            $this->_messages[] = __('Flickr authentication cleared', $this->_slug);
+        }
+        else if ('update' === $_POST['action']){
+            $wpFlickrEmbed->update_settings($_POST);
+            $this->_messages[] = __('Options updated', $this->_slug);
+        }
+
+        unset($_POST['action']);
+    }
+
+
+    /**
+     * Show options form.
+     */
+    public function show_forms() {
+        add_meta_box( $this->_slug . '-flickr-auth', __( 'Flickr authentication', $this->_slug ), array( &$this, 'flickrAuthMetaBox' ), $this->_slug, 'normal');
+        add_meta_box( $this->_slug . '-options', __( 'Options', $this->_slug ), array( &$this, 'optionsMetaBox' ), $this->_slug, 'normal');
+        do_meta_boxes($this->_slug, 'normal', '');
+    }
+
+
+    /**
+     * Callback for rendering flickr auth meta box.
+     */
+    public function flickrAuthMetaBox() {
+        global $wpFlickrEmbed;
+        ?>
+        <?php if($wpFlickrEmbed->authenticatedWithFlickr()): ?>
+            <form action="<?php $_SERVER['REQUEST_URI'] ?>" method="post" onsubmit="return confirm('<?php _e('Are you sure you want to clear Flickr authentication?', $this->_slug) ?>')">
+                <input type="hidden" name="action" value="clear_flickr" />
+                <table width="100%" cellspacing="2" cellpadding="5" class="form-table">
+                    <tr>
+                        <th width="33%" valign="top" scope="row"><?php _e('Flickr Username', $this->_slug) ?>: </th>
+                        <td><?php echo htmlspecialchars($wpFlickrEmbed->settings[self::FLICKR_USER_NAME]); ?></td>
+                    </tr>
+                    <tr>
+                        <th width="33%" valign="top" scope="row"><?php _e('Flickr User ID', $this->_slug) ?>: </th>
+                        <td><?php echo htmlspecialchars($wpFlickrEmbed->settings[self::FLICKR_USER_NSID]); ?></td>
+                    </tr>
+                </table>
+                <p class="submit"><input type="submit" value="<?php _e('Clear user information &raquo;', $this->_slug); ?>" /></p>
+            </form>
+        <?php else: ?>
+            <p><?php _e('Please authorize access to your Flickr account if you want to be able to insert your private photos.', $this->_slug) ?></p>
+            <form name="wpFlickrEmbed" method="post" action="<?php echo $wpFlickrEmbed->pluginURI ?>/include/flickrAuthenticator.php">
+                <input type="hidden" name="action" value="auth_flickr" />
+                <input type="hidden" name="optionsPageUrl" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
+                <input type="submit" value="<?php _e('Authorize with Flickr', $this->_slug) ?>" />
+            </form>
+        <?php endif; ?>
+    <?php
+    }
+
+
+    /**
+     * Callback for rendering options meta box.
+     */
+    public function optionsMetaBox() {
+        global $wpFlickrEmbed;
+
+        ?>
+        <form action="<?php $_SERVER['REQUEST_URI'] ?>" method="post">
+            <input type="hidden" name="action" value="update" />
+            <table width="100%" cellspacing="2" cellpadding="5" class="form-table">
+                <tr>
+                    <th width="33%" valign="top" scope="row"><?php _e('Link the photo to', $this->_slug) ?>: </th>
+                    <td>
+                        <input type="radio" id="link_flickr" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="0" <?php if(empty($wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK])){ ?>checked="checked" <?php } ?>/> <label for="link_flickr"><?php _e('The photo page of Flickr', $this->_slug); ?></label><br />
+                        <input type="radio" id="link_photo" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="1" <?php if(!empty($wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK])){ ?>checked="checked" <?php } ?>/> <label for="link_photo"><?php _e('The photo directly', $this->_slug); ?></label><br />
+                    </td>
+                </tr>
+                <tr>
+                    <th width="33%" valign="top" scope="row"><?php _e('The "rel" attribute of link tag', $this->_slug) ?>: </th>
+                    <td>
+                        <input type="text" name="<?php echo self::OPTION_LINK_REL ?>" value="<?php echo htmlspecialchars($wpFlickrEmbed->settings[self::OPTION_LINK_REL]); ?>" /><br />
+                        <small><?php _e("(if you want to use the Lightbox, set \"lightbox\")", $this->_slug); ?></small>
+                    </td>
+                </tr>
+                <tr>
+                    <th width="33%" valign="top" scope="row"><?php _e('The "class" attribute of link tag', $this->_slug) ?>: </th>
+                    <td>
+                        <input type="text" name="<?php echo self::OPTION_LINK_CLASS ?>" value="<?php echo htmlspecialchars($wpFlickrEmbed->settings[self::OPTION_LINK_CLASS]); ?>" /><br />
+                        <small><?php _e("(if you want to use the Lightview, set \"lightview\")", $this->_slug); ?></small>
+                    </td>
+                </tr>
+            </table>
+            <p class="submit"><input type="submit" value="<?php _e('Update options &raquo;', $this->_slug); ?>" /></p>
+        </form>
+        <?php
+    }
+
+
+    /**
+     * Get property.
+     */
+    public function __get($property) {
+        $propertyFuncName = 'get'.ucfirst((string)$property);
+
+        if( ! is_callable( array($this, $propertyFuncName) ) )
+            throw new Exception('Bad property: ' . $property);
+
+        return call_user_func( array($this, $propertyFuncName) );
+    }
+
+
+    public function getErrors() { return $this->_errors; }
+    public function getMessages() { return $this->_messages; }
+}

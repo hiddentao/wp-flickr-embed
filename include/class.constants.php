@@ -1,6 +1,6 @@
 <?php
 
-interface WPFlickrEmbedConstants {
+interface WPFlickrEmbed_Constants {
     const FLICKR_API_URI = 'http://api.flickr.com/services/rest/?';
     const FLICKR_API_KEY = '3f02754ebb3a1fb2d79f62200d3744e0';
     const FLICKR_SECRET = '4af3a6dcd49af4a7';

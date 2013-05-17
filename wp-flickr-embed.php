@@ -11,10 +11,14 @@ Author URI: http://hiddentao.com
 require_once(dirname(__FILE__).'/DPZ/Flickr.php');
 use \DPZ\Flickr;
 
-require_once(dirname(__FILE__).'/include/constants.php');
+require_once(dirname(__FILE__).'/include/class.constants.php');
 
 
-class WpFlickrEmbed implements WPFlickrEmbedConstants {
+
+
+class WpFlickrEmbed implements WPFlickrEmbed_Constants {
+    private $_slug = 'wp-flickr-embed';
+
     var $pluginURI = null;
     var $settings = array();
     var $default_settings = array(
@@ -29,6 +33,11 @@ class WpFlickrEmbed implements WPFlickrEmbedConstants {
     );
 
     function WpFlickrEmbed() {
+        $this->includeDir =  dirname(__FILE__). '/include';
+        $this->pagesDir = $this->includeDir . '/pages';
+
+        spl_autoload_register(array(&$this, 'class_loader'));
+
         $this->settings = get_option(get_class($this));
 
         $flush_settings = false;
@@ -42,7 +51,7 @@ class WpFlickrEmbed implements WPFlickrEmbedConstants {
             $this->update_settings();
         }
 
-        $this->pluginURI = get_option('siteurl').'/wp-content/plugins/'.dirname(plugin_basename(__FILE__));
+        $this->pluginURI = plugin_dir_url(__FILE__);
         // Avoid 'insecure content' loading errors.
         if (is_ssl())
             $this->pluginURI = str_replace('http:', 'https:', $this->pluginURI);
@@ -53,6 +62,8 @@ class WpFlickrEmbed implements WPFlickrEmbedConstants {
         add_action('media_buttons', array(&$this, 'addMediaButton'), 20);
         add_action('media_upload_flickr', array(&$this, 'media_upload_flickr'));
         add_action('admin_menu', array(&$this, 'addAdminMenu'));
+        add_action('admin_print_scripts', array(&$this, 'adminPrintScripts'));
+        add_action('admin_print_styles', array(&$this, 'adminPrintStyles'));
 
         // check auth enabled
         if(!function_exists('curl_init') && !ini_get('allow_url_fopen')) {
@@ -75,6 +86,19 @@ class WpFlickrEmbed implements WPFlickrEmbedConstants {
             ));
         }
 
+    }
+
+
+    /**
+     * Class loader.
+     */
+    function class_loader($class) {
+        if (0 !== stripos($class, 'WpFlickrEmbed')) {
+            return;
+        }
+        // class name is in form:  WpFlickrEmbed_Xyz_Yyy
+        $shortClassName = str_replace('_', '-', substr($class, stripos($class, '_') + 1));
+        require($this->includeDir . '/class.' . strtolower($shortClassName) . '.php');
     }
 
 
@@ -135,9 +159,39 @@ class WpFlickrEmbed implements WPFlickrEmbedConstants {
 
     function addAdminMenu() {
         if (function_exists('add_options_page')) {
-            add_options_page(__('WP Flickr Embed', 'wp-flickr-embed'), __('WP Flickr Embed', 'wp-flickr-embed'), 8, dirname(__FILE__)."/wp-flickr-embed-admin.php");
+            add_options_page(__('WP Flickr Embed', 'wp-flickr-embed'), __('WP Flickr Embed', 'wp-flickr-embed'), 8, $this->pagesDir.'/admin.php');
         }
     }
+
+    /**
+     * Handler for 'admin_print_scripts' hook.
+     */
+    function adminPrintScripts() {
+        if ($this->isViewingAdminPage()) {
+            wp_enqueue_script('postbox');
+            wp_enqueue_script('dashboard');
+        }
+    }
+
+
+    /**
+     * Handler for 'admin_print_styles' hook.
+     */
+    public function adminPrintStyles() {
+        if ($this->isViewingAdminPage()) {
+            wp_enqueue_style('dashboard');
+            wp_enqueue_style('wp-flickr-embed-admin', $this->pluginURI . '/wp-flickr-embed-admin.css');
+        }
+    }
+
+
+    /**
+     * Get whether user is viewing our admin page.
+     */
+    private function isViewingAdminPage() {
+        return (isset($_GET['page']) && 0 === stripos($_GET['page'], $this->_slug));
+    }
+
 
     function media_upload_flickr() {
         wp_iframe('media_upload_type_flickr');
@@ -191,6 +245,15 @@ class WpFlickrEmbed implements WPFlickrEmbedConstants {
         ));
     }
 
+
+    /**
+     * Get whether user has authenticated with Flickr.
+     *
+     * @return bool true if so; false otherwise.
+     */
+    function authenticatedWithFlickr() {
+        return !empty($this->settings[self::FLICKR_OAUTH_TOKEN]);
+    }
 }
 
 /** Get the iFRAME contents */

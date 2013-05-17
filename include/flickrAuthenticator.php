@@ -14,8 +14,8 @@ $currentPageUrl = sprintf('%s://%s:%d%s',
 );
 
 $flickrAPI = new Flickr(
-    WPFlickrEmbedConstants::FLICKR_API_KEY,
-    WPFlickrEmbedConstants::FLICKR_SECRET,
+    WPFlickrEmbed_Constants::FLICKR_API_KEY,
+    WPFlickrEmbed_Constants::FLICKR_SECRET,
     $currentPageUrl
 );
 
