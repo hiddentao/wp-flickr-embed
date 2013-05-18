@@ -143,6 +143,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      * Hook for 'template_redirect' action.
      */
     function hook_template_redirect() {
+        // sign a flickr request
         $wpfe_sign = get_query_var(self::SIGN_URL_PARAM_NAME);
         if (!empty($wpfe_sign)) {
             // parse JSON string
@@ -155,12 +156,11 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
                     die('No Flickr API method specified: ' . print_r($json,true));
                 }
 
-                // make the method call
-                $response = $this->flickrAPI->call($json->method, get_object_vars($json));
+                // get signed call
+                $ret = $this->flickrAPI->getSignedUrlParams($json->method, get_object_vars($json));
 
                 header("Content-type: application/json");
-                print(str_replace('\/', '/', json_encode($response)));
-
+                print json_encode($ret);
                 exit();
             }
         }
@@ -232,6 +232,17 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
             wp_enqueue_script('postbox');
             wp_enqueue_script('dashboard');
         }
+    }
+
+
+
+    public function getFlickrApiUrl() {
+        return \DPZ\Flickr::API_ENDPOINT;
+    }
+
+
+    public function getSignRequestApiUrl() {
+        return sprintf('%s?%s=', trailingslashit(get_bloginfo('wpurl')), self::SIGN_URL_PARAM_NAME);
     }
 
 

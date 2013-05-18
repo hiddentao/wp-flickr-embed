@@ -91,13 +91,13 @@ media_upload_header();
     var plugin_img_uri = plugin_uri + '/images';
 
     var flickr_user_id = '<?php echo $wpFlickrEmbed->settings[$wpFlickrEmbed::FLICKR_USER_NSID] ?>';
-    var flickr_backend_url = '<?php echo trailingslashit(get_bloginfo('wpurl')) . '?' . $wpFlickrEmbed::AJAX_URL_PARAM_NAME . '=' ?>';
+    var sign_request_url = '<?php echo $wpFlickrEmbed->getSignRequestApiUrl() ?>';
 
     var flickr_errors = {
-        0: "<?php _e('Not found photo', 'wp-flickr-embed') ?>",
+        0: "<?php _e('No photos found', 'wp-flickr-embed') ?>",
         1: "<?php _e('Too many tags in ALL query', 'wp-flickr-embed') ?>",
         2: "<?php _e('Unknown user', 'wp-flickr-embed') ?>",
-        3: "<?php _e('Parameterless searches have been disabled', 'wp-flickr-embed') ?>",
+        3: "<?php _e('Parameter-less searches have been disabled', 'wp-flickr-embed') ?>",
         4: "<?php _e('You don\'t have permission to view this pool', 'wp-flickr-embed') ?>",
         10: "<?php _e('Sorry, the Flickr search API is not currently available.', 'wp-flickr-embed') ?>",
         11: "<?php _e('No valid machine tags', 'wp-flickr-embed') ?>",

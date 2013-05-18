@@ -120,19 +120,40 @@ class Flickr
      */
     public function call($method, $parameters = NULL)
     {
+        $signed = $this->getSignedUrlParams($method, $parameters);
+
+        $response = $this->httpRequest($signed['url'], $signed['params']);
+
+        return empty($response) ? NULL : unserialize($response);
+    }
+
+
+    /**
+     * Get the URL and signed params needed to call a Flickr API method
+     *
+     * @param string $method The FLickr API method name
+     * @param array $parameters The method parameters
+     * @return array('url' => string, 'params' => array)
+     */
+    public function getSignedUrlParams($method, $parameters = NULL)
+    {
         $requestParams = ($parameters == NULL ? array() : $parameters);
         $requestParams['method'] = $method;
-        $requestParams['format'] = 'php_serial';
+        if (empty($requestParams['format']))
+            $requestParams['format'] = 'php_serial';
 
         $requestParams = array_merge($requestParams, $this->getOauthParams());
 
         $requestParams['oauth_token'] = $this->getOauthData(self::OAUTH_ACCESS_TOKEN);
         $this->sign(self::API_ENDPOINT, $requestParams);
 
-        $response = $this->httpRequest(self::API_ENDPOINT, $requestParams);
-
-        return empty($response) ? NULL : unserialize($response);
+        return array(
+            'url' => self::API_ENDPOINT,
+            'params' => $requestParams
+        );
     }
+
+
 
     /**
      * Upload a photo

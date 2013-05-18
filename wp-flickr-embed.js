@@ -31,19 +31,37 @@ function WpFlickrEmbed() {
     $('#loader').hide();
   };
 
-  self.makeAjaxCall = function(params, successCallback) {
+  self.getFlickrData = function(params, successCallback) {
     $('#ajax_error_msg').hide();
     $('#loader').show();
 
     params.format = 'json';
+    params.nojsoncallback = 1;  // don't want give us JSONP response
 
+    // first let's sign the request
     $.ajax({
       async: true,
       timeout: 15000,
-      url: flickr_backend_url + encodeURIComponent(JSON.stringify(params)),
+      url: sign_request_url + encodeURIComponent(JSON.stringify(params)),
       dataType: 'json',
       success: function(data) {
-        successCallback.call(self, data);
+        // now we call flickr
+        $.ajax({
+          async: true,
+          timeout: 10000,
+          type: 'POST',
+          url: data.url,
+          data: data.params,
+          dataType: 'json',
+          success: function(data) {
+            if ('undefined' !== typeof data.stat && 'ok' !== data.stat) {
+              return self.handleAjaxError(null, data.code || '', data.message || 'Flickr API returned an unknown error');
+            }
+
+            successCallback.call(self, data);
+          },
+          error: self.handleAjaxError
+        });
       },
       error: self.handleAjaxError
     });
@@ -61,7 +79,7 @@ function WpFlickrEmbed() {
     params.method = 'flickr.photos.getSizes';
     params.time = (new Date()).getTime();
 
-    self.makeAjaxCall(params, self.callbackPhotoSizes);
+    self.getFlickrData(params, self.callbackPhotoSizes);
   };
 
 
@@ -169,28 +187,33 @@ function WpFlickrEmbed() {
       $('#photoset').hide();
     }else if($('#flickr_search_1:checked').size()) {
       $('#flickr_search_query').hide();
-      $('#photoset').show();
+      wpFlickrEmbed.flickrGetPhotoSetsList(function() {
+        $('#photoset').show();
+      });
     }else{
       $('#flickr_search_query').show();
       $('#photoset').hide();
     }
   };
 
-  self.flickrGetPhotoSetsList = function() {
+  self.flickrGetPhotoSetsList = function(cb) {
     var params = {};
     params.user_id = flickr_user_id;
     params.format = 'json';
     params.method = 'flickr.photosets.getList';
 
-    self.makeAjaxCall(params, self.callbackPhotoSetsList);
+    self.getFlickrData(params, function(data) {
+      self.callbackPhotoSetsList(data);
+      cb();
+      $('#loader').hide();
+    });
   };
 
 
   self.callbackPhotoSetsList = function(data) {
     if(!data || !data.photosets || !data.photosets.photoset) {
-      document.getElemenetById('photosets').style.display = 'none';
+      $('#photoset').css('display', 'none');
     }
-    var index = 0;
     for(var i=0;i<data.photosets.photoset.length;i++) {
       $('#photoset').append(new Option(data.photosets.photoset[i].title._content, data.photosets.photoset[i].id));
     }
@@ -240,9 +263,8 @@ function WpFlickrEmbed() {
     }
 
     self.clearItems();
-    $('#loader').show();
 
-    self.makeAjaxCall(params, self.callbackSearchPhotos);
+    self.getFlickrData(params, self.callbackSearchPhotos);
   };
 
 
@@ -472,8 +494,10 @@ function WpFlickrEmbed() {
       if(!flickr_errors[code]) {
         code = 999;
       }
-      alert(data.code + ':' + flickr_errors[code]);
+      self.handleAjaxError(null, data.code, flickr_errors[code]);
     }
+
+    $("#loader").hide();
   };
 
 
@@ -533,8 +557,4 @@ $(document).ready(function() {
   new Image().src = plugin_img_uri+'/size_original.png';
 
   wpFlickrEmbed.searchPhoto(0);
-
-  if(flickr_user_id) {
-    wpFlickrEmbed.flickrGetPhotoSetsList();
-  }
 });
