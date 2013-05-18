@@ -10,7 +10,7 @@ $errors = $admin->errors;
 $messages = $admin->messages;
 ?>
 
-<div class="wrap">
+<div class="wrap wp-flickr-embed-admin">
     <h2><?php _e('Wordpress Flickr Embed', 'wp-flickr-embed') ?></h2>
 
     <?php if(!empty($errors)): ?>
@@ -22,11 +22,11 @@ $messages = $admin->messages;
     <?php endif; ?>
 
     <div class="metabox-holder">
-        <div class="postbox-container" style="width: 70%">
-            <?php $admin->show_forms() ?>
+        <div class="wp-flickr-embed-options postbox-container">
+            <?php $admin->drawAdminForms() ?>
         </div>
-        <div class="alignright" style="width: 27%">
-
+        <div class="wp-flickr-embed-sidebar">
+            <?php $admin->draw_sidebar() ?>
         </div>
     </div>
 </div>

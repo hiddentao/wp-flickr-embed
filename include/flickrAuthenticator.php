@@ -4,7 +4,7 @@
 require_once(dirname(__FILE__).'/../DPZ/Flickr.php');
 use \DPZ\Flickr;
 
-require_once(dirname(__FILE__).'/constants.php');
+require_once(dirname(__FILE__).'/class.constants.php');
 
 $currentPageUrl = sprintf('%s://%s:%d%s',
     (@$_SERVER['HTTPS'] == "on") ? 'https' : 'http',
