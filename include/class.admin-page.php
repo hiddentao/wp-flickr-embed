@@ -93,7 +93,7 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
             </form>
         <?php else: ?>
             <p><?php _e('Please authorize access to your Flickr account if you want to be able to insert your private photos.', $this->_slug) ?></p>
-            <form name="wpFlickrEmbed" method="post" action="<?php echo trailingslashit($wpFlickrEmbed->pluginURI) ?>include/flickrAuthenticator.php">
+            <form name="wpFlickrEmbed" method="get" action="<?php echo trailingslashit($wpFlickrEmbed->pluginURI) ?>include/flickrAuthenticator.php">
                 <input type="hidden" name="action" value="auth_flickr" />
                 <input type="hidden" name="optionsPageUrl" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
                 <input type="submit" value="<?php _e('Authorize with Flickr', $this->_slug) ?>" />

@@ -6,11 +6,20 @@ use \DPZ\Flickr;
 
 require_once(dirname(__FILE__).'/class.constants.php');
 
-$currentPageUrl = sprintf('%s://%s:%d%s',
+
+$optionsPageUrl = @$_GET['optionsPageUrl'];
+// if we still don't have return URL then user is trying to call script directly
+if (empty($optionsPageUrl)) {
+    die('Please don\'t call this script directly. Authenticate with Flickr from within the WP Embed Flickr options page instead.');
+}
+
+
+$currentPageUrl = sprintf('%s://%s:%d%s?optionsPageUrl=%s',
     (@$_SERVER['HTTPS'] == "on") ? 'https' : 'http',
     $_SERVER['SERVER_NAME'],
     $_SERVER['SERVER_PORT'],
-    $_SERVER['SCRIPT_NAME']
+    $_SERVER['SCRIPT_NAME'],
+    urlencode($optionsPageUrl)
 );
 
 $flickrAPI = new Flickr(
@@ -20,23 +29,12 @@ $flickrAPI = new Flickr(
 );
 
 
-$optionsPageUrl = $_POST['optionsPageUrl'];
-$firstTimeScriptIsBeingCalled = !empty($optionsPageUrl);
-
-if ($firstTimeScriptIsBeingCalled) {
+// first time we're calling this?
+$oauth_verifier = @$_GET['oauth_verifier'];
+if (empty( $oauth_verifier )) {
     // clear auth
     $flickrAPI->signout();
-    // save options page URL to session (so that we can use it once Flickr has called back to us)
-    $_SESSION['wp-flickr-embed'] = array( 'optionsPageUrl' => $optionsPageUrl );
-} else {
-    $optionsPageUrl = @$_SESSION['wp-flickr-embed']['optionsPageUrl'];
 }
-
-// if we still don't have return URL then user is trying to call script directly
-if (empty($optionsPageUrl)) {
-    die('Please don\'t call this script directly. Authenticate with Flickr from within the WP Embed Flickr options page instead.');
-}
-
 
 
 /*
@@ -54,6 +52,6 @@ if ($flickrAPI->authenticate('read')) {
 }
 
 // back to options page
-header(sprintf('Location: %s', @$_SESSION['wp-flickr-embed']['optionsPageUrl']));
+header(sprintf('Location: %s', $optionsPageUrl));
 
 
