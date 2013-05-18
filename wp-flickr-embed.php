@@ -156,6 +156,9 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
                     die('No Flickr API method specified: ' . print_r($json,true));
                 }
 
+                // api key
+                $json->api_key = self::FLICKR_API_KEY;
+
                 // get signed call
                 $ret = $this->flickrAPI->getSignedUrlParams($json->method, get_object_vars($json));
 

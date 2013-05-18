@@ -26,6 +26,11 @@ function WpFlickrEmbed() {
 
 
 
+  self.handleFlickrError = function(code, msg) {
+    $('#ajax_error_msg').text('Flickr error: ' + code + ' (' + msg + ')').show();
+    $('#loader').hide();
+  };
+
   self.handleAjaxError = function(XHR, status, errorThrown) {
     $('#ajax_error_msg').text('AJAX error: ' + status + ' (' + errorThrown + ')').show();
     $('#loader').hide();
@@ -55,7 +60,7 @@ function WpFlickrEmbed() {
           dataType: 'json',
           success: function(data) {
             if ('undefined' !== typeof data.stat && 'ok' !== data.stat) {
-              return self.handleAjaxError(null, data.code || '', data.message || 'Flickr API returned an unknown error');
+              return self.handleFlickrError(data.code || '', data.message || 'Flickr API returned an unknown error');
             }
 
             successCallback.call(self, data);
@@ -494,7 +499,7 @@ function WpFlickrEmbed() {
       if(!flickr_errors[code]) {
         code = 999;
       }
-      self.handleAjaxError(null, data.code, flickr_errors[code]);
+      self.handleFlickrError(code, flickr_errors[code]);
     }
 
     $("#loader").hide();

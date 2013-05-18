@@ -60,6 +60,7 @@ class Flickr
     const AUTH_ENDPOINT = 'http://www.flickr.com/services/oauth/authorize';
     const ACCESS_TOKEN_ENDPOINT = 'http://www.flickr.com/services/oauth/access_token';
     const API_ENDPOINT = 'http://www.flickr.com/services/rest';
+    const SECURE_API_ENDPOINT = 'https://secure.flickr.com/services/rest';
     const UPLOAD_ENDPOINT = 'http://www.flickr.com/services/upload/';
     const REPLACE_ENDPOINT = 'http://www.flickr.com/services/replace/';
 
@@ -129,26 +130,40 @@ class Flickr
 
 
     /**
-     * Get the URL and signed params needed to call a Flickr API method
+     * Get the signed URL and params needed to call a Flickr API method
+     *
+     * If not authenticated then unsigned version is returned.
      *
      * @param string $method The FLickr API method name
      * @param array $parameters The method parameters
+     * @param array $options additional options:
+     *      use_secure_api = true|false (default)
+     *
      * @return array('url' => string, 'params' => array)
      */
-    public function getSignedUrlParams($method, $parameters = NULL)
+    public function getSignedUrlParams($method, $parameters = NULL, $options = array())
     {
+        if (!empty($options['use_secure_api'])) {
+            $api_url = self::SECURE_API_ENDPOINT;
+        } else {
+            $api_url = self::API_ENDPOINT;
+        }
+
         $requestParams = ($parameters == NULL ? array() : $parameters);
         $requestParams['method'] = $method;
         if (empty($requestParams['format']))
             $requestParams['format'] = 'php_serial';
 
-        $requestParams = array_merge($requestParams, $this->getOauthParams());
+        // if authenticated then add in authentication
+        if ($this->isAuthenticated()) {
+            $requestParams = array_merge($requestParams, $this->getOauthParams());
 
-        $requestParams['oauth_token'] = $this->getOauthData(self::OAUTH_ACCESS_TOKEN);
-        $this->sign(self::API_ENDPOINT, $requestParams);
+            $requestParams['oauth_token'] = $this->getOauthData(self::OAUTH_ACCESS_TOKEN);
+            $this->sign($api_url, $requestParams);
+        }
 
         return array(
-            'url' => self::API_ENDPOINT,
+            'url' => $api_url,
             'params' => $requestParams
         );
     }

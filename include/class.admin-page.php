@@ -31,9 +31,9 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
         // flickr auth result
         $authResult = @$_GET['auth_result'];
         if ('success' === $authResult) {
-            $this->_messages[] = __('Flickr authorization successful', $this->_slug);
+            $this->_messages[] = __('Flickr authorization successful.', $this->_slug);
         } else if ('fail' === $authResult) {
-            $this->_errors[] = __('Oops, something went wrong whilst trying to authorize access to Flickr', $this->_slug);
+            $this->_errors[] = __('Oops, something went wrong whilst trying to authorize access to Flickr.', $this->_slug);
         }
     }
 
