@@ -46,7 +46,7 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
 
         if ('clear_flickr' === $_POST['action']){
             $wpFlickrEmbed->clearFlickrAuthentication();
-            $this->_messages[] = __('Flickr authentication cleared', $this->_slug);
+            $this->_messages[] = __('Flickr authorization cleared', $this->_slug);
         }
         else if ('update' === $_POST['action']){
             $wpFlickrEmbed->update_settings($_POST);
