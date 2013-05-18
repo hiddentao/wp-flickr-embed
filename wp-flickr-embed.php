@@ -38,6 +38,8 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
     );
 
     function WpFlickrEmbed() {
+        global $wp;
+
         $this->includeDir =  dirname(__FILE__). '/include';
         $this->pagesDir = $this->includeDir . '/pages';
 
@@ -77,9 +79,16 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
             $this->_disabled = self::DISABLED_REASON_PHP_VERSION;
         }
 
+        if ($this->isViewingOurAdminPage()) {
+            $this->_currentURL = admin_url(sprintf('options-general.php?%s', $_SERVER['QUERY_STRING']));
+        } else {
+            $this->_currentURL = null;
+        }
+
         $this->flickrAPI = new Flickr(
             self::FLICKR_API_KEY,
-            self::FLICKR_SECRET
+            self::FLICKR_SECRET,
+            $this->_currentURL
         );
 
         // are we authenticated with flickr? if so then set up auth params
@@ -125,7 +134,8 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      */
     function hook_init() {
         global $wp;
-        $wp->add_query_var( self::AJAX_URL_PARAM_NAME );
+        $wp->add_query_var( self::SIGN_URL_PARAM_NAME );
+        $wp->add_query_var( self::FLICKR_AUTH_URL_PARAM_NAME );
     }
 
 
@@ -133,14 +143,13 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      * Hook for 'template_redirect' action.
      */
     function hook_template_redirect() {
-        $wpfe_call = get_query_var(self::AJAX_URL_PARAM_NAME);
-
-        if (!empty($wpfe_call)) {
+        $wpfe_sign = get_query_var(self::SIGN_URL_PARAM_NAME);
+        if (!empty($wpfe_sign)) {
             // parse JSON string
-            $json = @json_decode(stripslashes($wpfe_call));
+            $json = @json_decode(stripslashes($wpfe_sign));
 
             if (empty($json) || !is_object($json)) {
-                die('Invalid JSON input: ' . $wpfe_call);
+                die('Invalid JSON input: ' . $wpfe_sign);
             } else {
                 if (empty($json->method)) {
                     die('No Flickr API method specified: ' . print_r($json,true));
@@ -154,6 +163,40 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
                 exit();
             }
+        }
+
+        // flickr authorization process
+        $wpfe_flickr_auth = get_query_var(self::FLICKR_AUTH_URL_PARAM_NAME);
+        if (!empty($wpfe_flickr_auth)) {
+            // first time call?
+            $oauth_verifier = $_GET['oauth_verifier'];
+            if (empty($oauth_verifier)) {
+                // want flickr to come back here
+                $current_url = sprintf('%s?%s=%s',
+                    trailingslashit(get_bloginfo('wpurl')), self::FLICKR_AUTH_URL_PARAM_NAME, urlencode($wpfe_flickr_auth));
+
+                $this->flickrAPI = new \DPZ\Flickr(
+                    self::FLICKR_API_KEY,
+                    self::FLICKR_SECRET,
+                    $current_url
+                );
+
+                // sign out and re-auth
+                $this->flickrAPI->signOut();
+                if (!$this->flickrAPI->authenticate('read')) {
+                    header('Location: ' . $wpfe_flickr_auth . '&auth_result=fail');
+                }
+            } else {
+                // complete auth
+                if ($this->flickrAPI->authenticate('read')) {
+                    $this->saveFlickrAuthentication();
+                    header('Location: ' . $wpfe_flickr_auth . '&auth_result=success');
+                } else {
+                    header('Location: ' . $wpfe_flickr_auth . '&auth_result=fail');
+                }
+            }
+
+            exit();
         }
     }
 
@@ -185,7 +228,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      * Handler for 'admin_print_scripts' hook.
      */
     function adminPrintScripts() {
-        if ($this->isViewingAdminPage()) {
+        if ($this->isViewingOurAdminPage()) {
             wp_enqueue_script('postbox');
             wp_enqueue_script('dashboard');
         }
@@ -196,7 +239,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      * Handler for 'admin_print_styles' hook.
      */
     public function adminPrintStyles() {
-        if ($this->isViewingAdminPage()) {
+        if ($this->isViewingOurAdminPage()) {
             wp_enqueue_style('dashboard');
             wp_enqueue_style('wp-flickr-embed-admin', $this->pluginURI . '/wp-flickr-embed-admin.css');
         }
@@ -206,7 +249,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
     /**
      * Get whether user is viewing our admin page.
      */
-    private function isViewingAdminPage() {
+    private function isViewingOurAdminPage() {
         return (isset($_GET['page']) && 0 === stripos($_GET['page'], $this->_slug));
     }
 
@@ -241,6 +284,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      * Clear Flickr authentication credentials.
      */
     function clearFlickrAuthentication() {
+        $this->flickrAPI->signout();
         $this->update_settings(array(
             self::FLICKR_USER_FULLNAME => '',
             self::FLICKR_USER_NAME => '',

@@ -10,6 +10,7 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
     private $_slug = 'wp-flickr-embed';
 
 
+
     public function __construct() {
         global $wpFlickrEmbed;
 
@@ -26,6 +27,14 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
                     break;
             }
         }
+
+        // flickr auth result
+        $authResult = @$_GET['auth_result'];
+        if ('success' === $authResult) {
+            $this->_messages[] = __('Flickr authorization successful', $this->_slug);
+        } else if ('fail' === $authResult) {
+            $this->_errors[] = __('Oops, something went wrong whilst trying to authorize access to Flickr', $this->_slug);
+        }
     }
 
 
@@ -35,19 +44,7 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
     public function handleFormSubmissions() {
         global $wpFlickrEmbed;
 
-        // did we just try and authenticate with Flickr? (see includes/flickrAuthenticator.php)
-        if (!empty($_SESSION['wp-flickr-embed']) && !empty($_SESSION['wp-flickr-embed']['auth'])) {
-            $result = $_SESSION['wp-flickr-embed']['auth'];
-            unset($_SESSION['wp-flickr-embed']['auth']);
-
-            if ('success' === $result) {
-                $wpFlickrEmbed->saveFlickrAuthentication();
-                $this->_messages[] = __('Flickr authorization successful', $this->_slug);
-            } else {
-                $this->_errors[] = __('Oops, something went wrong whilst trying to authorize access to Flickr', $this->_slug);
-            }
-        }
-        else if ('clear_flickr' === $_POST['action']){
+        if ('clear_flickr' === $_POST['action']){
             $wpFlickrEmbed->clearFlickrAuthentication();
             $this->_messages[] = __('Flickr authentication cleared', $this->_slug);
         }
@@ -77,7 +74,7 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
         global $wpFlickrEmbed;
         ?>
         <?php if($wpFlickrEmbed->authenticatedWithFlickr()): ?>
-            <form action="<?php $_SERVER['REQUEST_URI'] ?>" method="post" onsubmit="return confirm('<?php _e('Are you sure you want to remove Flickr authorization?', $this->_slug) ?>')">
+            <form action="" method="post" onsubmit="return confirm('<?php _e('Are you sure you want to remove Flickr authorization?', $this->_slug) ?>')">
                 <input type="hidden" name="action" value="clear_flickr" />
                 <table width="100%" cellspacing="2" cellpadding="5" class="form-table">
                     <tr>
@@ -93,9 +90,11 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
             </form>
         <?php else: ?>
             <p><?php _e('Please authorize access to your Flickr account if you want to be able to insert your private photos.', $this->_slug) ?></p>
-            <form name="wpFlickrEmbed" method="get" action="<?php echo trailingslashit($wpFlickrEmbed->pluginURI) ?>include/flickrAuthenticator.php">
-                <input type="hidden" name="action" value="auth_flickr" />
-                <input type="hidden" name="optionsPageUrl" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
+            <form name="wpFlickrEmbed" method="get" action="<?php bloginfo('wpurl') ?>">
+                <input type="hidden"
+                       name="<?php echo self::FLICKR_AUTH_URL_PARAM_NAME ?>"
+                       value="<?php echo admin_url('options-general.php?' .$_SERVER['QUERY_STRING']) ?>"
+                    />
                 <input type="submit" value="<?php _e('Authorize with Flickr', $this->_slug) ?>" />
             </form>
         <?php endif; ?>
