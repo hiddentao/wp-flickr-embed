@@ -16,5 +16,8 @@ interface WPFlickrEmbed_Constants {
     const OPTION_LINK_CLASS = 'link_class';
 
     const AJAX_URL_PARAM_NAME = '__wpfe';
+
+    const DISABLED_REASON_CURL_FOPEN = 'curl_fopen';
+    const DISABLED_REASON_PHP_VERSION = 'php_version';
 }
 

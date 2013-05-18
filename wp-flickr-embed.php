@@ -14,6 +14,11 @@ use \DPZ\Flickr;
 require_once(dirname(__FILE__).'/include/class.constants.php');
 
 
+if (!defined('PHP_VERSION_ID')) {
+    $version = explode('.', PHP_VERSION);
+    define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
+}
+
 
 
 class WpFlickrEmbed implements WPFlickrEmbed_Constants {
@@ -65,9 +70,11 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
         add_action('admin_print_scripts', array(&$this, 'adminPrintScripts'));
         add_action('admin_print_styles', array(&$this, 'adminPrintStyles'));
 
-        // check auth enabled
+        // check that we can do use this plugin
         if(!function_exists('curl_init') && !ini_get('allow_url_fopen')) {
-            $this->disabled = true;
+            $this->_disabled = self::DISABLED_REASON_CURL_FOPEN;
+        } else if (PHP_VERSION_ID < 50200) {
+            $this->_disabled = self::DISABLED_REASON_PHP_VERSION;
         }
 
         $this->flickrAPI = new Flickr(
@@ -87,6 +94,17 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
         }
 
     }
+
+
+    /**
+     * Get whether this plugin is disabled.
+     *
+     * @return bool FALSE if not; otherwise the reason for being disabled.
+     */
+    function isDisabled() {
+        return $this->_disabled ? $this->_disabled : FALSE;
+    }
+
 
 
     /**
@@ -258,7 +276,13 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
 /** Get the iFRAME contents */
 function media_upload_type_flickr() {
-    require(dirname(__FILE__) .'/wp-flickr-embed-upload-frame.php');
+    global $wpFlickrEmbed;
+
+    if ($wpFlickrEmbed->isDisabled()) {
+        echo '<p>' . __('The Wordpress Flickr Embed plugin has been disabled. Please visit the plugin\'s options page.', 'wp-flickr-embed') . '</p>';
+    } else {
+        require(dirname(__FILE__) .'/wp-flickr-embed-upload-frame.php');
+    }
 }
 
 $wpFlickrEmbed = new WpFlickrEmbed;

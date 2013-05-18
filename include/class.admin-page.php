@@ -13,8 +13,18 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
     public function __construct() {
         global $wpFlickrEmbed;
 
-        if ($wpFlickrEmbed->disabled) {
-            $this->_messages[] = __('Your version of PHP does not support curl, and allow_url_fopen is disabled.<br />Thus is preventing Flickr authentication.', 'wp-flickr-embed');
+        if ($wpFlickrEmbed->isDisabled()) {
+
+            $this->_errors[] = __('Sorry, this plugin cannot currently be used.', $this->_slug);
+
+            switch ($wpFlickrEmbed->isDisabled()) {
+                case self::DISABLED_REASON_CURL_FOPEN:
+                    $this->_errors[] = __('Your version of PHP does not support curl, and allow_url_fopen is disabled.<br />Thus is preventing Flickr authentication.', $this->_slug);
+                    break;
+                case self::DISABLED_REASON_PHP_VERSION:
+                    $this->_errors[] = __('This plugin requires PHP 5.2 or above.', $this->_slug);
+                    break;
+            }
         }
     }
 

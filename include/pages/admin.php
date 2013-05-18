@@ -21,13 +21,16 @@ $messages = $admin->messages;
     <div id="message" class="updated fade"><p><strong><?php echo join('<br />', $messages) ?></strong></p></div>
     <?php endif; ?>
 
-    <div class="metabox-holder">
-        <div class="wp-flickr-embed-options postbox-container">
-            <?php $admin->drawAdminForms() ?>
+    <?php if (!$wpFlickrEmbed->isDisabled()): ?>
+        <div class="metabox-holder">
+            <div class="wp-flickr-embed-options postbox-container">
+                <?php $admin->drawAdminForms() ?>
+            </div>
+            <div class="wp-flickr-embed-sidebar">
+                <?php $admin->draw_sidebar() ?>
+            </div>
         </div>
-        <div class="wp-flickr-embed-sidebar">
-            <?php $admin->draw_sidebar() ?>
-        </div>
-    </div>
+    <?php endif; ?>
+
 </div>
 

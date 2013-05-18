@@ -1,5 +1,5 @@
 <?php
-require_once(dirname(__FILE__).'/include/constants.php');
+require_once(dirname(__FILE__).'/include/class.constants.php');
 
 global $type, $tab, $wpFlickrEmbed;
 
