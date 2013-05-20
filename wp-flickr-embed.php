@@ -8,16 +8,29 @@ Version: 1.1
 Author URI: http://hiddentao.com
 */
 
-require_once(dirname(__FILE__).'/DPZ/Flickr.php');
-use \DPZ\Flickr;
 
-require_once(dirname(__FILE__).'/include/class.constants.php');
+require_once(dirname(__FILE__).'/DPZ/Flickr.php');
 
 
 if (!defined('PHP_VERSION_ID')) {
     $version = explode('.', PHP_VERSION);
     define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
 }
+
+
+/**
+ * Class loader.
+ */
+function wp_flickr_embed_class_loader($class) {
+    if (0 !== stripos($class, 'WpFlickrEmbed')) {
+        return;
+    }
+    // class name is in form:  WpFlickrEmbed_Xyz_Yyy
+    $shortClassName = str_replace('_', '-', substr($class, stripos($class, '_') + 1));
+    require(dirname(__FILE__).'/include/class.' . strtolower($shortClassName) . '.php');
+}
+spl_autoload_register('wp_flickr_embed_class_loader');
+
 
 
 
@@ -42,8 +55,6 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
         $this->includeDir =  dirname(__FILE__). '/include';
         $this->pagesDir = $this->includeDir . '/pages';
-
-        spl_autoload_register(array(&$this, 'class_loader'));
 
         $this->settings = get_option(get_class($this));
 
@@ -94,11 +105,11 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
         // are we authenticated with flickr? if so then set up auth params
         if (!empty($this->settings[self::FLICKR_OAUTH_TOKEN])) {
             $this->flickrAPI->useOAuthAccessCredentials(array(
-                \DPZ\Flickr::USER_FULL_NAME => $this->settings[self::FLICKR_USER_FULLNAME],
-                \DPZ\Flickr::USER_NAME => $this->settings[self::FLICKR_USER_NAME],
-                \DPZ\Flickr::USER_NSID => $this->settings[self::FLICKR_USER_NSID],
-                \DPZ\Flickr::OAUTH_ACCESS_TOKEN => $this->settings[self::FLICKR_OAUTH_TOKEN],
-                \DPZ\Flickr::OAUTH_ACCESS_TOKEN_SECRET => $this->settings[self::FLICKR_OAUTH_TOKEN_SECRET],
+                Flickr::USER_FULL_NAME => $this->settings[self::FLICKR_USER_FULLNAME],
+                Flickr::USER_NAME => $this->settings[self::FLICKR_USER_NAME],
+                Flickr::USER_NSID => $this->settings[self::FLICKR_USER_NSID],
+                Flickr::OAUTH_ACCESS_TOKEN => $this->settings[self::FLICKR_OAUTH_TOKEN],
+                Flickr::OAUTH_ACCESS_TOKEN_SECRET => $this->settings[self::FLICKR_OAUTH_TOKEN_SECRET],
             ));
         }
 
@@ -114,19 +125,6 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
         return $this->_disabled ? $this->_disabled : FALSE;
     }
 
-
-
-    /**
-     * Class loader.
-     */
-    function class_loader($class) {
-        if (0 !== stripos($class, 'WpFlickrEmbed')) {
-            return;
-        }
-        // class name is in form:  WpFlickrEmbed_Xyz_Yyy
-        $shortClassName = str_replace('_', '-', substr($class, stripos($class, '_') + 1));
-        require($this->includeDir . '/class.' . strtolower($shortClassName) . '.php');
-    }
 
 
     /**
@@ -178,7 +176,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
                 $current_url = sprintf('%s?%s=%s',
                     trailingslashit(get_bloginfo('wpurl')), self::FLICKR_AUTH_URL_PARAM_NAME, urlencode($wpfe_flickr_auth));
 
-                $this->flickrAPI = new \DPZ\Flickr(
+                $this->flickrAPI = new Flickr(
                     self::FLICKR_API_KEY,
                     self::FLICKR_SECRET,
                     $current_url
@@ -240,7 +238,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
 
     public function getFlickrApiUrl() {
-        return \DPZ\Flickr::API_ENDPOINT;
+        return Flickr::API_ENDPOINT;
     }
 
 
