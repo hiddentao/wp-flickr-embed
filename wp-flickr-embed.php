@@ -174,7 +174,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
             if (empty($oauth_verifier)) {
                 // want flickr to come back here
                 $current_url = sprintf('%s?%s=%s',
-                    trailingslashit(get_bloginfo('wpurl')), self::FLICKR_AUTH_URL_PARAM_NAME, urlencode($wpfe_flickr_auth));
+                    trailingslashit(site_url()), self::FLICKR_AUTH_URL_PARAM_NAME, urlencode($wpfe_flickr_auth));
 
                 $this->flickrAPI = new Flickr(
                     self::FLICKR_API_KEY,
@@ -243,7 +243,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
 
     public function getSignRequestApiUrl() {
-        return sprintf('%s?%s=', trailingslashit(get_bloginfo('wpurl')), self::SIGN_URL_PARAM_NAME);
+        return sprintf('%s?%s=', trailingslashit(site_url()), self::SIGN_URL_PARAM_NAME);
     }
 
 
