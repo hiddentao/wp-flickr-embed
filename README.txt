@@ -7,7 +7,7 @@ Plugin URI: https://github.com/hiddentao/wp-flickr-embed
 Tags: admin, images, posts, flickr, embed
 Requires at least: 3.4.1
 Tested up to: 3.4.1
-Stable tag: 1.1
+Stable tag: 1.2
 
 == Description ==
 
@@ -59,6 +59,9 @@ Yes you can. You will still be able to insert any public photo available on Flic
 
 
 == Changelog ==
+
+= 1.2 (May 20, 2013) =
+* Fix two major issues (see http://wordpress.org/support/topic/version-11-triggers-fatal-error)
 
 = 1.1 (May 18, 2013) =
 * Fixed Flickr authorization so that private photos can be inserted
