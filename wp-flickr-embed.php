@@ -9,9 +9,6 @@ Author URI: http://hiddentao.com
 */
 
 
-require_once(dirname(__FILE__).'/DPZ/Flickr.php');
-
-
 if (!defined('PHP_VERSION_ID')) {
     $version = explode('.', PHP_VERSION);
     define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
@@ -96,7 +93,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
             $this->_currentURL = null;
         }
 
-        $this->flickrAPI = new Flickr(
+        $this->flickrAPI = new WpFlickrEmbed_Flickr(
             self::FLICKR_API_KEY,
             self::FLICKR_SECRET,
             $this->_currentURL
@@ -105,11 +102,11 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
         // are we authenticated with flickr? if so then set up auth params
         if (!empty($this->settings[self::FLICKR_OAUTH_TOKEN])) {
             $this->flickrAPI->useOAuthAccessCredentials(array(
-                Flickr::USER_FULL_NAME => $this->settings[self::FLICKR_USER_FULLNAME],
-                Flickr::USER_NAME => $this->settings[self::FLICKR_USER_NAME],
-                Flickr::USER_NSID => $this->settings[self::FLICKR_USER_NSID],
-                Flickr::OAUTH_ACCESS_TOKEN => $this->settings[self::FLICKR_OAUTH_TOKEN],
-                Flickr::OAUTH_ACCESS_TOKEN_SECRET => $this->settings[self::FLICKR_OAUTH_TOKEN_SECRET],
+                WpFlickrEmbed_Flickr::USER_FULL_NAME => $this->settings[self::FLICKR_USER_FULLNAME],
+                WpFlickrEmbed_Flickr::USER_NAME => $this->settings[self::FLICKR_USER_NAME],
+                WpFlickrEmbed_Flickr::USER_NSID => $this->settings[self::FLICKR_USER_NSID],
+                WpFlickrEmbed_Flickr::OAUTH_ACCESS_TOKEN => $this->settings[self::FLICKR_OAUTH_TOKEN],
+                WpFlickrEmbed_Flickr::OAUTH_ACCESS_TOKEN_SECRET => $this->settings[self::FLICKR_OAUTH_TOKEN_SECRET],
             ));
         }
 
@@ -174,9 +171,9 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
             if (empty($oauth_verifier)) {
                 // want flickr to come back here
                 $current_url = sprintf('%s?%s=%s',
-                    trailingslashit(site_url()), self::FLICKR_AUTH_URL_PARAM_NAME, urlencode($wpfe_flickr_auth));
+                    trailingslashit($this->getSiteHomeUrl()), self::FLICKR_AUTH_URL_PARAM_NAME, urlencode($wpfe_flickr_auth));
 
-                $this->flickrAPI = new Flickr(
+                $this->flickrAPI = new WpFlickrEmbed_Flickr(
                     self::FLICKR_API_KEY,
                     self::FLICKR_SECRET,
                     $current_url
@@ -238,12 +235,24 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
 
     public function getFlickrApiUrl() {
-        return Flickr::API_ENDPOINT;
+        return WpFlickrEmbed_Flickr::API_ENDPOINT;
     }
 
 
     public function getSignRequestApiUrl() {
-        return sprintf('%s?%s=', trailingslashit(site_url()), self::SIGN_URL_PARAM_NAME);
+        return sprintf('%s?%s=', trailingslashit($this->getSiteHomeUrl()), self::SIGN_URL_PARAM_NAME);
+    }
+
+
+    /**
+     * Get website home URL.
+     *
+     * We use rather than WP's API directly as we may want to do some URL manipulation in future.
+     *
+     * @return string
+     */
+    public function getSiteHomeUrl() {
+        return home_url();
     }
 
 
@@ -311,11 +320,11 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
      */
     function saveFlickrAuthentication() {
         $this->update_settings(array(
-            self::FLICKR_USER_FULLNAME => $this->flickrAPI->getOauthData(Flickr::USER_FULL_NAME),
-            self::FLICKR_USER_NAME => $this->flickrAPI->getOauthData(Flickr::USER_NAME),
-            self::FLICKR_USER_NSID => $this->flickrAPI->getOauthData(Flickr::USER_NSID),
-            self::FLICKR_OAUTH_TOKEN => $this->flickrAPI->getOauthData(Flickr::OAUTH_ACCESS_TOKEN),
-            self::FLICKR_OAUTH_TOKEN_SECRET => $this->flickrAPI->getOauthData(Flickr::OAUTH_ACCESS_TOKEN_SECRET),
+            self::FLICKR_USER_FULLNAME => $this->flickrAPI->getOauthData(WpFlickrEmbed_Flickr::USER_FULL_NAME),
+            self::FLICKR_USER_NAME => $this->flickrAPI->getOauthData(WpFlickrEmbed_Flickr::USER_NAME),
+            self::FLICKR_USER_NSID => $this->flickrAPI->getOauthData(WpFlickrEmbed_Flickr::USER_NSID),
+            self::FLICKR_OAUTH_TOKEN => $this->flickrAPI->getOauthData(WpFlickrEmbed_Flickr::OAUTH_ACCESS_TOKEN),
+            self::FLICKR_OAUTH_TOKEN_SECRET => $this->flickrAPI->getOauthData(WpFlickrEmbed_Flickr::OAUTH_ACCESS_TOKEN_SECRET),
         ));
     }
 

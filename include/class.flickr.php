@@ -23,7 +23,7 @@
  *
  */
 
-class Flickr
+class WpFlickrEmbed_Flickr
 {
     const VERSION = '1.2.3';
 
