@@ -4,7 +4,7 @@ Plugin Name: Wordpress Flickr Embed
 Plugin URI: https://github.com/hiddentao/wp-flickr-embed
 Description: Insert Flickr images into your post using an interactive popup, launched from the visual editor toolbar.
 Author: Ramesh Nair
-Version: 1.2
+Version: 1.2.1
 Author URI: http://hiddentao.com
 */
 
