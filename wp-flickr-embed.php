@@ -247,12 +247,11 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
     /**
      * Get website home URL.
      *
-     * We use rather than WP's API directly as we may want to do some URL manipulation in future.
-     *
      * @return string
      */
     public function getSiteHomeUrl() {
-        return home_url();
+        // if we're in SSL then request SSL version
+        return home_url('', is_ssl() ? 'https' : 'http');
     }
 
 
