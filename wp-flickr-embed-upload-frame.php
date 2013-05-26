@@ -16,14 +16,14 @@ media_upload_header();
     <div id="search-filter" style="text-align: left">
         <?php _e('Search:', 'wp-flickr-embed') ?>
         <input type="text" id="flickr_search_query" />
-        <?php if(!empty($wpFlickrEmbed->settings[$wpFlickrEmbed::FLICKR_USER_NSID])): ?>
+        <?php if(!empty($wpFlickrEmbed->settings[WPFlickrEmbed_Constants::FLICKR_USER_NSID])): ?>
             <select id="photoset" name="photoset"></select>
             <input type="radio" id="flickr_search_0" name="flickr_search" class="searchTypes" value="own" checked="checked"/><label for="flickr_search_0"><?php _e('Your Photos', 'wp-flickr-embed') ?></label>
             <input type="radio" id="flickr_search_1" name="flickr_search" class="searchTypes" value="sets"/><label for="flickr_search_1"><?php _e('Your Sets', 'wp-flickr-embed') ?></label>
             <input type="radio" id="flickr_search_2" name="flickr_search" class="searchTypes" value="everyone"/><label for="flickr_search_2"><?php _e('Everyone\'s Photos', 'wp-flickr-embed') ?></label>
         <?php endif; ?>
         <input type="submit" onclick="wpFlickrEmbed.searchPhoto(0)" value="<?php _e('Search photo', 'wp-flickr-embed'); ?>" class="button" />
-        <div class="extra_filters">
+        <div class="extra_filters">      F
             <label for="sort_by">Sort by:</label>
             <select id="sort_by">
                 <option value="date-posted-desc">Date posted (desc)</option>
@@ -63,7 +63,7 @@ media_upload_header();
             <input type="radio" id="alignment_right" name="alignment" value="right" /> <label for="alignment_right"><?php _e('Right', 'wp-flickr-embed') ?></label><br />
         </div>
     </div>
-    <?php if (!empty($wpFlickrEmbed->settings[$wpFlickrEmbed::OPTION_PHOTO_LINK])): ?>
+    <?php if (!empty($wpFlickrEmbed->settings[WPFlickrEmbed_Constants::OPTION_PHOTO_LINK])): ?>
     <div id="select_lightbox_size" class="selector">
         3. <?php _e('Select size of lightbox photo', 'wp-flickr-embed') ?>
         <div id="lightbox_size_preview" class="size_preview"><img id="lightbox_size_image" class="size_image" rel="none" src="<?php echo $wpFlickrEmbed->pluginURI ?>/images/size_thumbnail.png" alt=""/></div>
@@ -90,7 +90,7 @@ media_upload_header();
     var plugin_uri = '<?php echo $wpFlickrEmbed->pluginURI ?>';
     var plugin_img_uri = plugin_uri + '/images';
 
-    var flickr_user_id = '<?php echo $wpFlickrEmbed->settings[$wpFlickrEmbed::FLICKR_USER_NSID] ?>';
+    var flickr_user_id = '<?php echo $wpFlickrEmbed->settings[WPFlickrEmbed_Constants::FLICKR_USER_NSID] ?>';
     var sign_request_url = '<?php echo $wpFlickrEmbed->getSignRequestApiUrl() ?>';
 
     var flickr_errors = {
@@ -109,9 +109,9 @@ media_upload_header();
 
     var msg_pages = '<?php _e('(%1$s / %2$s page(s), %3$s photo(s))', 'wp-flickr-embed')?>';
 
-    var setting_photo_link = <?php echo !empty($wpFlickrEmbed->settings[$wpFlickrEmbed::OPTION_PHOTO_LINK]) ? 1 : 0 ?>;
-    var setting_link_rel = '<?php echo !empty($wpFlickrEmbed->settings[$wpFlickrEmbed::OPTION_LINK_REL]) ? $wpFlickrEmbed->settings[$wpFlickrEmbed::OPTION_LINK_REL] : '' ?>';
-    var setting_link_class = '<?php echo !empty($wpFlickrEmbed->settings[$wpFlickrEmbed::OPTION_LINK_CLASS]) ? $wpFlickrEmbed->settings[$wpFlickrEmbed::OPTION_LINK_CLASS] : '' ?>';
+    var setting_photo_link = <?php echo !empty($wpFlickrEmbed->settings[WPFlickrEmbed_Constants::OPTION_PHOTO_LINK]) ? 1 : 0 ?>;
+    var setting_link_rel = '<?php echo !empty($wpFlickrEmbed->settings[WPFlickrEmbed_Constants::OPTION_LINK_REL]) ? $wpFlickrEmbed->settings[WPFlickrEmbed_Constants::OPTION_LINK_REL] : '' ?>';
+    var setting_link_class = '<?php echo !empty($wpFlickrEmbed->settings[WPFlickrEmbed_Constants::OPTION_LINK_CLASS]) ? $wpFlickrEmbed->settings[WPFlickrEmbed_Constants::OPTION_LINK_CLASS] : '' ?>';
     //-->
 </script>
 <script type="text/javascript" src="<?php echo $wpFlickrEmbed->pluginURI ?>/json2.js"></script>
