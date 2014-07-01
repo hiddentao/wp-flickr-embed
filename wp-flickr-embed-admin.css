@@ -1,0 +1,37 @@
+#normal-sortables .postbox p.submit {
+    padding: 20px 0 0;
+    float: none;
+}
+
+
+.wp-flickr-embed-options {
+    display: inline-block;
+    width: 60%;
+}
+.wp-flickr-embed-sidebar {
+    display: inline-block;
+    width: 27%;
+    margin-left: 10px;
+}
+
+.wp-flickr-embed-sidebar .wp-flickr-embed-widget {
+    border: 1px solid #CCC;
+    border-radius: 5px 25px;
+    margin: 0 0 10px 0;
+    padding: 10px 15px;
+}
+
+.wp-flickr-embed-sidebar .wp-flickr-embed-widget ul {
+    list-style: disc;
+    padding-left: 30px;
+}
+
+
+#wp-flickr-embed-spread-word {
+    border-color: green;
+    background-color: #cfc;
+}
+#wp-flickr-embed-spread-word form {
+    text-align: center;
+}
+

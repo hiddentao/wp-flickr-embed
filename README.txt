@@ -7,7 +7,7 @@ Plugin URI: https://github.com/hiddentao/wp-flickr-embed
 Tags: admin, images, posts, flickr, embed
 Requires at least: 3.4.1
 Tested up to: 3.4.1
-Stable tag: 1.0.1
+Stable tag: 1.2.2
 
 == Description ==
 
@@ -24,6 +24,7 @@ This is a fork of the (http://wordpress.org/extend/plugins/wordpress-media-flick
 
 Source on Github: https://github.com/hiddentao/wp-flickr-embed
 
+*Note:* This plugin requires PHP 5.2.
 
 == Installation ==
 
@@ -39,15 +40,15 @@ Source on Github: https://github.com/hiddentao/wp-flickr-embed
 
 == Frequently Asked Questions ==
 
-= How do I authenticate the plugin with my Flickr account? =
+= How do I authorize the plugin to access my private Flickr photos? =
 
-1. Goto `Settings > Flickr Embed` and click `Flickr Authenticate`.
+1. Goto `Settings > WP Flickr Embed` and click the `Authorize with Flickr` button.
 2. This will take you to Flickr where upon you should login and follow the instructions.
-3. Once you've authorized it in Flickr go back to `Settings > Flickr Embed` and click `Finish authenticate`.
+3. Once you've authorized it you should be taken back to the options page with a success message.
 
 = I don't have a Flickr account. Can I still use the plugin? =
 
-Yes you can. You will still be able to insert any public photo available on Flickr. Authentication is only needed if you wish to access your own private photos on Flickr.
+Yes you can. You will still be able to insert any public photo available on Flickr. Authorization is only needed if you wish to access your own private photos on Flickr.
 
 = How do I get it working with Lightbox? =
 
@@ -58,6 +59,18 @@ Yes you can. You will still be able to insert any public photo available on Flic
 
 
 == Changelog ==
+
+= 1.2.2 (May 26, 2013) =
+* Further bug fixes and improvements (see http://wordpress.org/support/topic/syntax-error-with-121?replies=3)
+
+= 1.2.1 (May 21, 2013) =
+* Further bug fixes and improvements (see http://wordpress.org/support/topic/version-11-triggers-fatal-error)
+
+= 1.2 (May 20, 2013) =
+* Fix two major issues (see http://wordpress.org/support/topic/version-11-triggers-fatal-error)
+
+= 1.1 (May 18, 2013) =
+* Fixed Flickr authorization so that private photos can be inserted
 
 = 1.0.0 (Nov 5, 2012) =
 * First version
