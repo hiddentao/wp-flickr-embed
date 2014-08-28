@@ -54,13 +54,13 @@ class WpFlickrEmbed_Flickr
     /**
      * Various API endpoints
      */
-    const REQUEST_TOKEN_ENDPOINT = 'http://www.flickr.com/services/oauth/request_token';
-    const AUTH_ENDPOINT = 'http://www.flickr.com/services/oauth/authorize';
-    const ACCESS_TOKEN_ENDPOINT = 'http://www.flickr.com/services/oauth/access_token';
-    const API_ENDPOINT = 'http://www.flickr.com/services/rest';
+    const REQUEST_TOKEN_ENDPOINT = 'https://www.flickr.com/services/oauth/request_token';
+    const AUTH_ENDPOINT = 'https://www.flickr.com/services/oauth/authorize';
+    const ACCESS_TOKEN_ENDPOINT = 'https://www.flickr.com/services/oauth/access_token';
+    const API_ENDPOINT = 'https://www.flickr.com/services/rest';
     const SECURE_API_ENDPOINT = 'https://secure.flickr.com/services/rest';
-    const UPLOAD_ENDPOINT = 'http://www.flickr.com/services/upload/';
-    const REPLACE_ENDPOINT = 'http://www.flickr.com/services/replace/';
+    const UPLOAD_ENDPOINT = 'https://www.flickr.com/services/upload/';
+    const REPLACE_ENDPOINT = 'https://www.flickr.com/services/replace/';
 
     /**
      * @var string Flickr API key
