@@ -6,8 +6,8 @@ Author URI: http://hiddentao.com
 Plugin URI: https://github.com/hiddentao/wp-flickr-embed
 Tags: admin, images, posts, flickr, embed
 Requires at least: 3.4.1
-Tested up to: 3.9.1
-Stable tag: 1.2.3
+Tested up to: 3.9.2
+Stable tag: 1.3.0
 
 == Description ==
 
@@ -59,6 +59,10 @@ Yes you can. You will still be able to insert any public photo available on Flic
 
 
 == Changelog ==
+
+= 1.3.0 (Aug 28, 2014) =
+* Fix https://github.com/hiddentao/wp-flickr-embed/issues/6
+* Fix https://github.com/hiddentao/wp-flickr-embed/issues/10
 
 = 1.2.3 (Jul 1, 2014) =
 * Fix https://github.com/hiddentao/wp-flickr-embed/issues/7
