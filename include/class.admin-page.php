@@ -115,8 +115,9 @@ class WpFlickrEmbed_Admin_Page implements WPFlickrEmbed_Constants {
                 <tr>
                     <th width="33%" valign="top" scope="row"><?php _e('Link the photo to', $this->_slug) ?>: </th>
                     <td>
-                        <input type="radio" id="link_flickr" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="0" <?php if(empty($wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK])){ ?>checked="checked" <?php } ?>/> <label for="link_flickr"><?php _e('The photo page of Flickr', $this->_slug); ?></label><br />
-                        <input type="radio" id="link_photo" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="1" <?php if(!empty($wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK])){ ?>checked="checked" <?php } ?>/> <label for="link_photo"><?php _e('The photo directly', $this->_slug); ?></label><br />
+                        <input type="radio" id="link_flickr" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="0" <?php if (0 == $wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK]) { ?>checked="checked" <?php } ?>/> <label for="link_flickr"><?php _e('The photo page of Flickr', $this->_slug); ?></label><br />
+                        <input type="radio" id="link_photo" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="1" <?php if (1 == $wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK]) { ?>checked="checked" <?php } ?>/> <label for="link_photo"><?php _e('The photo directly', $this->_slug); ?></label><br />
+                        <input type="radio" id="link_none" name="<?php echo self::OPTION_PHOTO_LINK ?>" value="2" <?php if (2 == $wpFlickrEmbed->settings[self::OPTION_PHOTO_LINK]) { ?>checked="checked" <?php } ?>/> <label for="link_none"><?php _e('Nothing (note that this may conflict with Flickr <a href="https://www.flickr.com/help/guidelines">guidelines</a>)', $this->_slug); ?></label><br />
                     </td>
                 </tr>
                 <tr>

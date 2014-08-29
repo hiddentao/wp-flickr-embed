@@ -129,6 +129,9 @@ form input {
     float: left;
     width: 33%;
 }
+#select_alignment .alignment {
+    padding: 0.4em 0;
+}
 #select_lightbox_size {
     float: left;
     width: 30%;
@@ -153,11 +156,14 @@ div.div_size_o_disabled {
 #search-filter  {
     text-align: left;
 }
-#search-filter .extra_filters {
-    margin: 5px 0;
-}
 h3 {
-    padding-top: 10px;
+    padding-top: 20px;
+}
+#pages {
+    margin-left: 10px;
+}
+.extra_filters {
+    margin: 10px 0 10px;
 }
 /* clearfix */
 .pkg:after{
