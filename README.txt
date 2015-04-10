@@ -11,6 +11,8 @@ Stable tag: 1.3.0
 
 == Description ==
 
+**THIS PLUGIN IS NO LONGER UNDER ACTIVE DEVELOPMENT**
+
 Wordpress Flickr Embed is a Wordpress plugin that provides an interactive interface for adding Flickr images to your posts. The interface is conveniently launched from the visual editor toolbar.
 
 This is a fork of the (http://wordpress.org/extend/plugins/wordpress-media-flickr/) plugin for Wordpress and provides numerous bug fixes and enhancements over the original.
