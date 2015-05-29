@@ -220,7 +220,7 @@ class WpFlickrEmbed implements WPFlickrEmbed_Constants {
 
     function addAdminMenu() {
         if (function_exists('add_options_page')) {
-            add_options_page(__('WP Flickr Embed', 'wp-flickr-embed'), __('WP Flickr Embed', 'wp-flickr-embed'), 8, $this->pagesDir.'/admin.php');
+            add_options_page(__('WP Flickr Embed', 'wp-flickr-embed'), __('WP Flickr Embed', 'wp-flickr-embed'), 'manage_options', $this->pagesDir.'/admin.php');
         }
     }
 
