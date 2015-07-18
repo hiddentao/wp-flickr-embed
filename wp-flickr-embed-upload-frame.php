@@ -83,6 +83,19 @@ media_upload_header();
         <label for="photo_title"><?php _e('Photo title'); ?></label>
         <input type="text" id="photo_title" name="photo_title" value="" /><br /><br />
 
+        <div id='geo_div'>
+        <input type="checkbox" id="with_geo_tag" name="with_geo_tag" value="1" checked="true"/>
+        <label for="photo_geo"><?php _e('With Geo Tag'); ?></label>
+
+        <label for="photo_geo"><?php _e('latitude'); ?>:</label>
+        <label for="photo_geo" id="photo_geo_lat_label" ></label>
+        <!-- <input type="text" id="photo_geo_lat" name="photo_geo_lat" value="" /> -->
+
+        <label for="photo_geo"><?php _e('longitude'); ?>:</label>
+        <label for="photo_geo" id="photo_geo_lng_label" ></label>
+        <!-- <input type="text" id="photo_geo_lng" name="photo_geo_lng" value="" /><br /><br /> -->
+        </div>
+        <br /><br /> 
         <input type="checkbox" id="continue_insert" name="continue_insert" value="1" />
         <label for="continue_insert"><?php _e('Continue to insert another photo after this.', 'wp-flickr-embed') ?></label><br />
     </div>

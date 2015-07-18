@@ -36,7 +36,7 @@ function WpFlickrEmbed() {
     $('#loader').hide();
   };
 
-  self.getFlickrData = function(params, successCallback) {
+  self.getFlickrData = function(params, successCallback, errorHandleBySelf  ) {
     $('#ajax_error_msg').hide();
     $('#loader').show();
 
@@ -60,9 +60,10 @@ function WpFlickrEmbed() {
           dataType: 'json',
           success: function(data) {
             if ('undefined' !== typeof data.stat && 'ok' !== data.stat) {
-              return self.handleFlickrError(data.code || '', data.message || 'Flickr API returned an unknown error');
+                if ( !errorHandleBySelf ) {
+                    return self.handleFlickrError(data.code || '', data.message || 'Flickr API returned an unknown error');
+                } 
             }
-
             successCallback.call(self, data);
           },
           error: self.handleAjaxError
@@ -84,9 +85,22 @@ function WpFlickrEmbed() {
     params.method = 'flickr.photos.getSizes';
     params.time = (new Date()).getTime();
 
-    self.getFlickrData(params, self.callbackPhotoSizes);
+    self.getFlickrData(params, self.callbackPhotoSizes,false);
   };
 
+  self.flickrGetPhotoGeo = function(photo_id) {
+    var params = {};
+    params.photo_id = photo_id;
+    params.method = 'flickr.photos.geo.getLocation';
+    params.time = (new Date()).getTime();
+
+    $('#geo_div').hide()
+    $('#photo_geo_lat_label').html(' ');
+    $('#photo_geo_lng_label').html(' ');
+    $('#with_geo_tag').prop("checked",false);
+
+    self.getFlickrData(params, self.callbackPhotoGeo,true);
+  };
 
   /**
    * Build DIV containing Radio button for selecting a size.
@@ -127,6 +141,21 @@ function WpFlickrEmbed() {
 
     return newSizeDiv;
   };
+
+  self.callbackPhotoGeo = function(data) {
+    if (! data) return 0;;
+    if (! data.photo) return 0;
+    if (! data.photo.location) return 0;
+
+    var geoInfo = "lat:" + data.photo.location.latitude +",lng:" + data.photo.location.longitude;
+
+//    $('#photo_geo_lat').val(data.photo.location.latitude );
+    $('#photo_geo_lat_label').html(data.photo.location.latitude );
+//    $('#photo_geo_lng').val(data.photo.location.longitude);
+    $('#photo_geo_lng_label').html(data.photo.location.longitude);
+    $('#with_geo_tag').prop("checked",true);
+    $('#geo_div').show()
+  }
 
 
   self.callbackPhotoSizes = function(data) {
@@ -215,7 +244,7 @@ function WpFlickrEmbed() {
       self.callbackPhotoSetsList(data);
       cb();
       $('#loader').hide();
-    });
+    },false);
   };
 
 
@@ -273,7 +302,7 @@ function WpFlickrEmbed() {
 
     self.clearItems();
 
-    self.getFlickrData(params, self.callbackSearchPhotos);
+    self.getFlickrData(params, self.callbackSearchPhotos,false);
   };
 
 
@@ -373,6 +402,7 @@ function WpFlickrEmbed() {
     self.title_text = self.photos[photo_id].title;
 
     self.flickrGetPhotoSizes(photo_id);
+    self.flickrGetPhotoGeo(photo_id);
 
     if(!$('#select_alignment :radio:checked').size()) {
       $('#alignment_none').attr('checked', 'checked');
@@ -422,7 +452,13 @@ function WpFlickrEmbed() {
         .attr('title', title_text);
 
     var a = $('<a />');
-    a.attr('href', (flickr_url ? flickr_url : '#')).attr('title', title_text).attr('rel', setting_link_rel);
+    flickr_url = (flickr_url ? flickr_url : '#')
+    a.attr('href',flickr_url ).attr('title', title_text).attr('rel', setting_link_rel);
+    var rev = 'href:\'' + flickr_url + '\'';
+    if ( $('#with_geo_tag:checked').size() > 0 ){
+       rev += ',lat:' + $('#photo_geo_lat_label').text() + ',lng:' + $('#photo_geo_lng_label').text();
+    }
+    a.attr('rev',rev);
     a.addClass(setting_link_class);
 
     var p = $('<p />');
